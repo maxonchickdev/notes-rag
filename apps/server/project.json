@@ -16,22 +16,18 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "server:build:development",
+          "buildTarget": "server:build:development"
         },
         "production": {
-          "buildTarget": "server:build:production",
+          "buildTarget": "server:build:production"
         }
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "apps/server/**/*.ts"
-        ]
+        "lintFilePatterns": ["apps/server/**/*.ts"]
       }
     }
   }
