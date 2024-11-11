@@ -44,3 +44,7 @@ Thumbs.db
 # Next.js
 .next
 out
+
+.env
+
+rag/app/**/__pycache__
