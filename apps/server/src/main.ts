@@ -1,4 +1,4 @@
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
@@ -15,6 +15,8 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
+
+  app.useGlobalPipes(new ValidationPipe());
 
   const host: string = configService.get<string>(`${SERVER_CONFIG}.host`);
   const port: string = configService.get<string>(`${SERVER_CONFIG}.port`);
