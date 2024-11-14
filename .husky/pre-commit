@@ -1,0 +1,2 @@
+yarn run lint:server
+yarn run lint:client

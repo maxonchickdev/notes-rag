@@ -10,46 +10,58 @@ import {
   Put,
   Res,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { Response } from 'express';
-import { CreateUserDto } from '../dto/create-user.dto';
 import {
   ApiBody,
   ApiConflictResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiTags,
 } from '@nestjs/swagger';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { Response } from 'express';
 
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
+import { UserService } from './user.service';
+
+@ApiTags('user')
 @Controller('user')
 export class UserController {
+  /**
+   *
+   * @param userService
+   */
   constructor(private readonly userService: UserService) {}
 
+
   /**
-   * Description placeholder
    *
-   * @async
-   * @param {Response} res
-   * @param {CreateUserDto} createUserDto
-   * @returns {Promise<Response>}
+   * @param res
+   * @param createUserDto
    */
   @Post()
   @HttpCode(HttpStatus.OK)
   @ApiBody({
-    type: CreateUserDto,
     description: 'Create new user',
+    type: CreateUserDto,
   })
   @ApiOperation({ summary: 'Create new user' })
   @ApiOkResponse({
     description: 'User successfully created',
-    type: CreateUserDto,
+    example: {
+      message: 'User successfully created',
+      newUser: {
+        _id: '6734778162e0ac7fa3f91111',
+        email: 'testEmail@gmail.com',
+        password: 'testPassword',
+        username: 'testUsername',
+      },
+    },
   })
   @ApiConflictResponse({
-    description: 'User with the same username or email exists',
-    // type: HttpExceptionDto,
+    description: 'User with the same email exists',
     example: {
-      statusCode: HttpStatus.CONFLICT,
-      message: 'User with the same username or email exists',
+      message: 'User with the email exists',
     },
   })
   async createUser(
@@ -58,29 +70,127 @@ export class UserController {
   ): Promise<Response> {
     try {
       const newUser = await this.userService.createUser(createUserDto);
-      return res.status(HttpStatus.CREATED).json({
+      return res.status(HttpStatus.OK).json({
         message: 'User successfully created',
         newUser,
       });
     } catch (err) {
-      return res.status(HttpStatus.BAD_REQUEST).json({
-        statusCode: 400,
-        message: 'Student not created',
-        error: 'Bad Request',
-      });
+      return res.status(err.response.statusCode).json(err.response.message);
     }
   }
 
   /**
-   * Description placeholder
    *
-   * @async
-   * @param {Response} res
-   * @param {string} userId
-   * @param {UpdateUserDto} updateUserDto
-   * @returns {Promise<Response>}
+   * @param response
+   * @param userId
+   */
+  @Delete('/:id')
+  @ApiOperation({ summary: 'Delete user' })
+  @ApiOkResponse({
+    description: 'User deleted successfully',
+    example: {
+      deletedUser: {
+        _id: '6734778162e0ac7fa3f91111',
+        email: 'testEmail@gmail.com',
+        password: 'testPassword',
+        username: 'testUsername',
+      },
+      message: 'User deleted successfully',
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+    example: {
+      message: 'User not found',
+    },
+  })
+  async deleteStudent(
+    @Res() response: Response,
+    @Param('id') userId: string
+  ): Promise<Response> {
+    try {
+      const deletedUser = await this.userService.deleteUser(userId);
+      return response.status(HttpStatus.OK).json({
+        deletedUser,
+        message: 'User deleted successfully',
+      });
+    } catch (err) {
+      return response
+        .status(err.response.statusCode)
+        .json(err.response.message);
+    }
+  }
+
+  /**
+   *
+   * @param res
+   * @param userId
+   */
+  @Get('/:id')
+  @ApiOperation({ summary: 'Find user' })
+  @ApiOkResponse({
+    description: 'User successfully found',
+    example: {
+      existingUser: {
+        _id: '6734778162e0ac7fa3f91111',
+        email: 'testEmail@gmail.com',
+        password: 'testPassword',
+        username: 'testUsername',
+      },
+      message: 'User found successfully',
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+    example: {
+      message: 'User not found',
+    },
+  })
+  async getUser(
+    @Res() res: Response,
+    @Param('id') userId: string
+  ): Promise<Response> {
+    try {
+      const existingUser = await this.userService.getUserById(userId);
+      return res.status(HttpStatus.OK).json({
+        existingUser,
+        message: 'User found successfully',
+      });
+    } catch (err) {
+      return res.status(err.response.statusCode).json(err.response.message);
+    }
+  }
+
+  /**
+   *
+   * @param res
+   * @param userId
+   * @param updateUserDto
    */
   @Put('/:id')
+  @ApiBody({
+    description: 'Update user',
+    type: UpdateUserDto,
+  })
+  @ApiOperation({ summary: 'Update existing user' })
+  @ApiOkResponse({
+    description: 'User successfully updated',
+    example: {
+      existingUser: {
+        _id: '6734778162e0ac7fa3f91111',
+        email: 'testEmail@gmail.com',
+        password: 'testPassword',
+        username: 'testUsername',
+      },
+      message: 'User successfully updated',
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+    example: {
+      message: 'User not found',
+    },
+  })
   async updateUser(
     @Res() res: Response,
     @Param('id') userId: string,
@@ -92,59 +202,11 @@ export class UserController {
         updateUserDto
       );
       return res.status(HttpStatus.OK).json({
-        message: 'User has been successfully updated',
         existingUser,
+        message: 'User has been successfully updated',
       });
     } catch (err) {
-      return res.status(err.status).json(err.response);
-    }
-  }
-
-  /**
-   * Description placeholder
-   *
-   * @async
-   * @param {Response} res
-   * @param {string} userId
-   * @returns {Promise<Response>}
-   */
-  @Get('/:id')
-  async getUser(
-    @Res() res: Response,
-    @Param('id') userId: string
-  ): Promise<Response> {
-    try {
-      const existingStudent = await this.userService.getUser(userId);
-      return res.status(HttpStatus.OK).json({
-        message: 'Student found successfully',
-        existingStudent,
-      });
-    } catch (err) {
-      return res.status(err.status).json(err.response);
-    }
-  }
-
-  /**
-   * Description placeholder
-   *
-   * @async
-   * @param {Response} response
-   * @param {string} userId
-   * @returns {Promise<Response>}
-   */
-  @Delete('/:id')
-  async deleteStudent(
-    @Res() response: Response,
-    @Param('id') userId: string
-  ): Promise<Response> {
-    try {
-      const deletedUser = await this.userService.deleteUser(userId);
-      return response.status(HttpStatus.OK).json({
-        message: 'User deleted successfully',
-        deletedUser,
-      });
-    } catch (err) {
-      return response.status(err.status).json(err.response);
+      return res.status(err.response.statusCode).json(err.response.message);
     }
   }
 }

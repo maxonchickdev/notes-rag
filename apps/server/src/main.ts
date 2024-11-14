@@ -1,19 +1,23 @@
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import { AppModule } from './app.module';
 import { SERVER_CONFIG } from './config/server.config';
 
+/**
+ *
+ */
 async function bootstrap() {
   const app = await NestFactory.create<INestApplication>(AppModule);
 
   const configService = app.get<ConfigService>(ConfigService);
 
   app.enableCors({
-    origin: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: true,
   });
 
   app.useGlobalPipes(new ValidationPipe());

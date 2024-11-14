@@ -3,37 +3,37 @@ import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
-  @MaxLength(30)
-  @IsNotEmpty()
-  @ApiProperty({
-    type: 'string',
-    name: 'username',
-    required: true,
-    example: 'testUsername',
-    description: 'The username of the user',
-  })
-  readonly username: string;
-
-  @IsString()
   @IsEmail()
   @IsNotEmpty()
   @ApiProperty({
-    type: 'string',
+    description: 'The email of the user',
+    example: 'testEmail',
     name: 'email',
     required: true,
-    example: 'testEmail',
-    description: 'The email of the user',
+    type: 'string',
   })
   readonly email: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    type: 'string',
+    description: 'The password of the user',
+    example: 'testPassword',
     name: 'password',
     required: true,
-    example: 'testPassword',
-    description: 'The password of the user',
+    type: 'string',
   })
   readonly password: string;
+
+  @IsString()
+  @MaxLength(30)
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'The username of the user',
+    example: 'testUsername',
+    name: 'username',
+    required: true,
+    type: 'string',
+  })
+  readonly username: string;
 }
