@@ -6,5 +6,6 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
   "git.confirmSync": false,
   "workbench.activityBar.location": "top",
-  "window.zoomLevel": 0
+  "window.zoomLevel": 0,
+  "editor.tabSize": 2
 }

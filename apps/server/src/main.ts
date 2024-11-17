@@ -2,6 +2,7 @@ import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { SERVER_CONFIG } from './config/server.config';
@@ -10,37 +11,39 @@ import { SERVER_CONFIG } from './config/server.config';
  *
  */
 async function bootstrap() {
-  const app = await NestFactory.create<INestApplication>(AppModule);
+	const app = await NestFactory.create<INestApplication>(AppModule);
 
-  const configService = app.get<ConfigService>(ConfigService);
+	const configService = app.get<ConfigService>(ConfigService);
 
-  app.enableCors({
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    origin: true,
-  });
+	app.enableCors({
+		credentials: true,
+		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		origin: ['http://localhost:4200'],
+	});
 
-  app.useGlobalPipes(new ValidationPipe());
+	app.use(cookieParser());
 
-  const host: string = configService.get<string>(`${SERVER_CONFIG}.host`);
-  const port: string = configService.get<string>(`${SERVER_CONFIG}.port`);
+	app.useGlobalPipes(new ValidationPipe());
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('notes-rag')
-    .setDescription('notes-rag description')
-    .setVersion('0.0.1')
-    .addServer(`http://${host}:${port}/`, 'Local enviroment')
-    .build();
+	const host: string = configService.get<string>(`${SERVER_CONFIG}.host`);
+	const port: string = configService.get<string>(`${SERVER_CONFIG}.port`);
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
+	const swaggerConfig = new DocumentBuilder()
+		.setTitle('notes-rag')
+		.setDescription('notes-rag description')
+		.setVersion('0.0.1')
+		.addServer(`http://${host}:${port}/`, 'Local enviroment')
+		.build();
 
-  SwaggerModule.setup('/', app, document, {
-    customSiteTitle: 'notes-rag',
-  });
+	const document = SwaggerModule.createDocument(app, swaggerConfig);
 
-  await app.listen(parseInt(port, 10));
+	SwaggerModule.setup('/', app, document, {
+		customSiteTitle: 'notes-rag',
+	});
 
-  Logger.log(`🚀 Application is running on: http://${host}:${port}/`);
+	await app.listen(parseInt(port, 10));
+
+	Logger.log(`🚀 Application is running on: http://${host}:${port}/`);
 }
 
 bootstrap();

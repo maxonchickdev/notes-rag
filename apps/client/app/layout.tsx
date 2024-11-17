@@ -17,7 +17,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className={roboto.className}>
-        <MaterialUiProvider>{children}</MaterialUiProvider>
+        <MaterialUiProvider>
+          {children}
+        </MaterialUiProvider>
       </body>
     </html>
   );

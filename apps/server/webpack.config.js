@@ -7,14 +7,14 @@ module.exports = {
   },
   plugins: [
     new NxAppWebpackPlugin({
-      target: 'node',
-      compiler: 'tsc',
-      main: './src/main.ts',
-      tsConfig: './tsconfig.app.json',
       assets: ['./src/assets'],
+      compiler: 'tsc',
+      generatePackageJson: true,
+      main: './src/main.ts',
       optimization: false,
       outputHashing: 'none',
-      generatePackageJson: true,
+      target: 'node',
+      tsConfig: './tsconfig.app.json',
     }),
   ],
 };
