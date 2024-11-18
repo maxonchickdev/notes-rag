@@ -18,7 +18,7 @@ async function bootstrap() {
 	app.enableCors({
 		credentials: true,
 		methods: ['GET', 'POST', 'PUT', 'DELETE'],
-		origin: ['http://localhost:4200'],
+		origin: ['http://localhost:4200', 'https://e466-34-23-168-93.ngrok-free.app'],
 	});
 
 	app.use(cookieParser());

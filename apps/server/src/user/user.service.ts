@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import {
 	ConflictException,
 	Injectable,
@@ -7,13 +8,14 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { hash } from 'bcrypt';
-import { Model, TypeExpressionOperator, Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 import { HASH_CONFIG } from '../config/hash.config';
 import { JWT_REFRESH_CONFIG } from '../config/jwt-refresh.config';
 import { AddDocumentDto } from './dto/add-document.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetResponseUserDto } from './dto/get-user-response.dto';
+import { QueryDto } from './dto/query.dto';
 import { SignInUserDto } from './dto/sign-in-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schema/user.schema';
@@ -26,8 +28,9 @@ export class UserService {
 	 * @param userModel
 	 * @param configService
 	 * @param jwtService
+	 * @param httpService
 	 */
-	constructor(@InjectModel('User') private readonly userModel: Model<User>, private readonly configService: ConfigService, private readonly jwtService: JwtService) {}
+	constructor(@InjectModel('User') private readonly userModel: Model<User>, private readonly configService: ConfigService, private readonly jwtService: JwtService, private readonly httpService: HttpService) {}
 
 	/**
 	 * @param createUserDto
@@ -153,12 +156,32 @@ export class UserService {
 	 * @param id
 	 */
 	async getDocuments(id: Types.ObjectId): Promise<string[]> {
-		console.log('hit');
 		const existingUser = await this.userModel.findById(id).select('documents').exec();
 
 		if(!existingUser) throw new NotFoundException('User not found');
 
-		console.log(existingUser.documents);
 		return existingUser.documents;
+	}
+
+	/**
+	 *
+	 * @param queryDto
+	 * @param id
+	 */
+	async getRagResponse(queryDto: QueryDto, id: Types.ObjectId) {
+		const documents = await this.getDocuments(id);
+		const res = await this.httpService.axiosRef<string>({
+			baseURL: 'https://e466-34-23-168-93.ngrok-free.app',
+			data: {
+				documents: documents,
+				query: queryDto.query
+			},
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			method: 'POST',
+			url: '/predict',
+		});
+		return res.data;
 	}
 }

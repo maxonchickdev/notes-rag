@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { compare } from 'bcrypt';
 import { Strategy } from 'passport-local';
 
-import { UserService } from '../../user/user.service';
+import { UserService } from '../user.service';
 
 @Injectable()
 export class SignInStrategy extends PassportStrategy(Strategy) {

@@ -28,6 +28,7 @@ import { AddDocumentDto } from './dto/add-document.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetResponseUserDto } from './dto/get-user-response.dto';
 import { PayloadDto } from './dto/payload.dto';
+import { QueryDto } from './dto/query.dto';
 import { SignInUserDto } from './dto/sign-in-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtGuard } from './guard/jwt.guard';
@@ -42,6 +43,23 @@ export class UserController {
 	 * @param userService
 	 */
 	constructor(private readonly userService: UserService) {}
+
+	/**
+	 *
+	 * @param queryDto
+	 * @param user
+	 */
+	@Post('prediction')
+	@ApiBody({
+  	description: 'Get RAG response',
+  	type: QueryDto,
+  })
+	@ApiOperation({ summary: 'RAG prediction' })
+	@UseGuards(JwtGuard)
+	async getRagPrediction(@Body() queryDto: QueryDto, @User() user: PayloadDto) {
+		console.log(user._id);
+		return this.userService.getRagResponse(queryDto, user._id);
+	}
 
 	/**
 	 *
@@ -74,7 +92,6 @@ export class UserController {
   })
 	@UseGuards(JwtGuard)
 	async addDocument(@User() user: PayloadDto, @Body() addDocumentDto: AddDocumentDto): Promise<GetResponseUserDto> {
-		console.log(user);
 		return await this.userService.addDocument(user._id, addDocumentDto);
 	}
 
@@ -105,7 +122,6 @@ export class UserController {
 	@UseGuards(JwtGuard)
 	@UseInterceptors(ClassSerializerInterceptor)
 	async getAllDocuments(@User() user: PayloadDto): Promise<string[]> {
-		console.log('User', user);
 		return await this.userService.getDocuments(user._id);
 	}
 

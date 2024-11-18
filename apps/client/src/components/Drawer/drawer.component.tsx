@@ -1,11 +1,18 @@
 'use client';
 
-import { Box, Drawer, TextField, Typography } from '@mui/material';
-import { FC } from 'react';
+import { Box, Button, Drawer, Typography } from '@mui/material';
+import { IAddDocument } from '@notes-rag/shared';
+import { FC, useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+
+import { axiosInstance } from '../../axios/axios.config';
+import { AddDocumentComponent } from '../add-document-controller/add-document-controller.component';
+import { DocumentComponent } from '../document/document.component';
 
 interface Props {
   open: boolean,
   setOpen: (open: boolean) => void
+  documents: string[]
 }
 
 /**
@@ -13,13 +20,47 @@ interface Props {
  * @param root0
  * @param root0.open
  * @param root0.setOpen
+ * @param root0.documents
  */
-export const DrawerComponent: FC<Props> = ({ open, setOpen }) => {
+export const DrawerComponent: FC<Props> = ({ documents, open, setOpen }) => {
+  const [err, setErr] = useState<string>('');
+  const { control, formState: { errors }, handleSubmit } = useForm<IAddDocument>({
+    mode: 'onChange'
+  });
+  /**
+   *
+   * @param data
+   */
+  const onLoadDocument: SubmitHandler<IAddDocument> = async (data) => {
+    try {
+      const res = await axiosInstance({
+        data: data,
+        method: 'post',
+        url: 'user/document'
+      });
+      documents.unshift(data.document);
+    } catch (err) {
+      setErr(err as string);
+    }
+  };
   return (
     <Drawer anchor='left' onClose={() => setOpen(false)} open={open}>
-      <Box sx={{ p: '10px', width: '300px' }}>
-        <Typography variant='h6'>Load data</Typography>
-        <TextField fullWidth maxRows={4} multiline placeholder="Paste data" rows={2}/>
+      <Box sx={{ p: '10px', width: '600px' }}>
+        <Typography variant='h6'>Load documents</Typography>
+        <form onSubmit={handleSubmit(onLoadDocument)}>
+          <AddDocumentComponent control={control} label='Document' name='document' required='Document is required' type='text' />
+          {errors.document && errors.document.message}
+          <Button fullWidth sx={{ my: '5px' }} type='submit' variant='outlined'>Load document</Button>
+        </form>
+        <Box sx={{ mt: '20px' }}>
+          {documents.length !== 0 ? (
+            documents.map((document, index) => (
+              <DocumentComponent document={document} key={index} />
+            ))
+          ) : (
+            <Typography>No documents</Typography>
+          )}
+        </Box>
       </Box>
     </Drawer>
   );

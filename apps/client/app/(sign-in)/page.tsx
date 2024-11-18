@@ -36,8 +36,6 @@ export default function Page() {
     }
   };
 
-  console.log(err);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <SignInController 

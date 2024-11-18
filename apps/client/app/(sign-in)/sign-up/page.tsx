@@ -2,14 +2,19 @@
 
 import { Button } from '@mui/material';
 import { ICreateUser } from '@notes-rag/shared';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
+import { axiosInstance } from '../../../src/axios/axios.config';
 import { SignUpController } from '../../../src/components/sign-up-controller/sign-up-controller.component';
 
 /**
  *
  */
 export default function Page() {
+  const [err, setErr] = useState<string>('');
+  const router = useRouter();
   const { control, formState: { errors }, handleSubmit } = useForm<ICreateUser>({
     mode: 'onChange'
   });
@@ -18,11 +23,20 @@ export default function Page() {
    *
    * @param data
    */
-  const onSubmit: SubmitHandler<ICreateUser> = async (data) => {
-    console.log(data);
+  const onSignUpUser: SubmitHandler<ICreateUser> = async (data) => {
+    try {
+      const res = await axiosInstance({
+        data: data,
+        method: 'post',
+        url: 'user'
+      });
+      router.push('/');
+    } catch (err) {
+      setErr(err as string);
+    }
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSignUpUser)}>
       <SignUpController 
         control={control} 
         label='Username' 

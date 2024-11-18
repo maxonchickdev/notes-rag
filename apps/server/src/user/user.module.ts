@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -10,10 +11,12 @@ import { SignInStrategy } from './strategy/sign-in.strategy';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
+
 @Module({
 	controllers: [UserController],
 	exports: [UserService],
 	imports: [
+		HttpModule,
 		MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
 		JwtModule.registerAsync({
 			imports: [ConfigModule],

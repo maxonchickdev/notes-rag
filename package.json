@@ -19,6 +19,7 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.7",
     "@mui/material-nextjs": "^6.1.6",
+    "@nestjs/axios": "^3.1.2",
     "@nestjs/common": "^10.0.2",
     "@nestjs/core": "^10.0.2",
     "@nestjs/jwt": "^10.2.0",
