@@ -10,7 +10,7 @@
     "lint:server": "npx nx lint server",
     "lint:client": "npx nx lint client",
     "prepare": "husky",
-    "reset": "npx nx reset"
+    "reset": "rm -rf .nx && npx nx reset"
   },
   "private": true,
   "dependencies": {
