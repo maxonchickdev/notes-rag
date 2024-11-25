@@ -1,3 +1,3 @@
 export interface IQuery {
-  query: string
+  query: string;
 }

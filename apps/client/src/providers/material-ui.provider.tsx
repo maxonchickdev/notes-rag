@@ -4,7 +4,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FC, ReactNode } from 'react';
 
-import { COLORS } from '../../enums/colors-enum/colors.enum';
+import { COLORS } from '../enums/colors.enum';
 
 const theme = createTheme({
   breakpoints: {
@@ -34,11 +34,6 @@ interface Props {
   children: ReactNode;
 }
 
-/**
- *
- * @param root0
- * @param root0.children
- */
 export const MaterialUiProvider: FC<Props> = ({ children }) => {
   return (
     <AppRouterCacheProvider options={{ key: 'css' }}>

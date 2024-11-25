@@ -4,53 +4,49 @@ import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class GetResponseUserDto {
-    @Exclude()
-    readonly _id: Types.ObjectId;
+  @Exclude()
+  readonly _id: Types.ObjectId;
 
-    @Expose()
-    @IsString()
-    @IsEmail()
-    @IsNotEmpty()
-    @ApiProperty({
-    	description: 'The email of the user',
-    	example: 'testEmail',
-    	name: 'email',
-    	required: true,
-    	type: String,
-    })
-    readonly email: string;
+  @ApiProperty({
+    description: 'The documents',
+    example: 'document',
+  })
+  @Expose()
+  readonly documents: string[];
 
-    @Exclude()
-    readonly password: string;
+  @ApiProperty({
+    description: 'The email of the user',
+    example: 'testEmail',
+    name: 'email',
+    required: true,
+    type: String,
+  })
+  @Expose()
+  @IsEmail()
+  @IsNotEmpty()
+  @IsString()
+  readonly email: string;
 
-    @Expose()
-    refresh: string;
+  @Exclude()
+  readonly password: string;
 
-    @Expose()
-    @IsString()
-    @MaxLength(30)
-    @IsNotEmpty()
-    @ApiProperty({
-    	description: 'The username of the user',
-    	example: 'testUsername',
-    	name: 'username',
-    	required: true,
-    	type: String,
-    })
-    readonly username: string;
+  @Expose()
+  refresh: string;
 
-    @Expose()
-    @ApiProperty({
-        description: 'The documents',
-        example: 'document',
-    })
-    readonly documents: string[];
+  @ApiProperty({
+    description: 'The username of the user',
+    example: 'testUsername',
+    name: 'username',
+    required: true,
+    type: String,
+  })
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(30)
+  readonly username: string;
 
-    /**
-     *
-     * @param partial
-     */
-    constructor(partial: Partial<GetResponseUserDto>) {
-    	Object.assign(this, partial);
-    }
+  constructor(partial: Partial<GetResponseUserDto>) {
+    Object.assign(this, partial);
+  }
 }

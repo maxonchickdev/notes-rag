@@ -4,28 +4,19 @@ import { FC, HTMLInputTypeAttribute } from 'react';
 import { Control, Controller } from 'react-hook-form';
 
 interface Props {
-  control: Control<ICreateUser>
-  required: string
-  name: 'email' | 'password' | 'username'
-  label: string
-  type: HTMLInputTypeAttribute
+  control: Control<ICreateUser>;
+  label: string;
+  name: 'email' | 'password' | 'username';
+  required: string;
+  type: HTMLInputTypeAttribute;
 }
 
-/**
- *
- * @param root0
- * @param root0.control
- * @param root0.label
- * @param root0.name
- * @param root0.required
- * @param root0.type
- */
 export const SignUpController: FC<Props> = ({
   control,
   label,
   name,
   required,
-  type
+  type,
 }) => {
   return (
     <Controller

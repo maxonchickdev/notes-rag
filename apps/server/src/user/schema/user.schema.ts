@@ -2,45 +2,48 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 export interface IUser extends Document {
-	readonly _id: Types.ObjectId
-	readonly email: string
-	readonly password: string
-	readonly refresh: string
-	readonly username: string
+  readonly _id: Types.ObjectId;
+  readonly email: string;
+  readonly password: string;
+  readonly refresh: string;
+  readonly username: string;
 }
 
+/**
+ *
+ */
 @Schema({ timestamps: true })
 export class User {
   @Prop({
-  	required: true,
-  	type: String,
-  	unique: true
+    required: false,
+    type: [String],
   })
-  	email: string;
+  documents: string[];
 
   @Prop({
-  	required: true,
-  	type: String,
+    required: true,
+    type: String,
+    unique: true,
   })
-  	password: string;
+  email: string;
 
   @Prop({
-  	default: null,
-  	type: String,
+    required: true,
+    type: String,
   })
-  	refresh: string;
+  password: string;
 
   @Prop({
-  	required: true,
-  	type: String,
+    default: null,
+    type: String,
   })
-  	username: string;
+  refresh: string;
 
-		@Prop({
-			required: false,
-			type: [String]
-		})
-		documents: string[];
+  @Prop({
+    required: true,
+    type: String,
+  })
+  username: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

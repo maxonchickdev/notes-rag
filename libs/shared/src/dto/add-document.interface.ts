@@ -1,3 +1,3 @@
 export interface IAddDocument {
-  document: string
+  document: string;
 }

@@ -10,9 +10,6 @@ import { axiosInstance } from '../../src/axios/axios.config';
 import { HeaderComponent } from '../../src/components/header/header-component';
 import { QueryController } from '../../src/components/query-controller/query-controller.component';
 
-/**
- *
- */
 export default function Page() {
   const router = useRouter();
   const [documents, setDocuments] = useState<string[]>([]);
@@ -20,21 +17,22 @@ export default function Page() {
   const [open, setOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<string>('');
-  const { control, formState: { errors }, handleSubmit } = useForm<IQuery>({
-    mode: 'onChange'
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<IQuery>({
+    mode: 'onChange',
   });
-  /**
-   *
-   */
+
+  console.log(err);
+
   useEffect(() => {
-    /**
-     *
-     */
     const fetchDocuments = async () => {
       try {
         const res = await axiosInstance({
           method: 'get',
-          url: 'user/document'
+          url: 'user/document',
         });
         setDocuments(res.data);
       } catch (error) {
@@ -44,14 +42,12 @@ export default function Page() {
 
     fetchDocuments();
   }, []);
-  /**
-   *
-   */
+
   const onLogout = async () => {
     try {
-      const res = await axiosInstance({
+      await axiosInstance({
         method: 'get',
-        url: 'user/logout'
+        url: 'user/logout',
       });
       router.push('/');
     } catch (err) {
@@ -69,7 +65,7 @@ export default function Page() {
       const res = await axiosInstance({
         data: data,
         method: 'post',
-        url: 'user/prediction'
+        url: 'user/prediction',
       });
       setIsLoading(false);
       setResponse(res.data.prediction);
@@ -80,9 +76,23 @@ export default function Page() {
 
   return (
     <>
-      <HeaderComponent documents={documents} onLogout={onLogout} open={open} setOpen={setOpen} />
-      <form onSubmit={handleSubmit(onQuerySubmit)} style={{ bottom: '50px', left: '50%', maxWidth: '700px', position: 'absolute', transform: 'translateX(-50%)', width: '100%' }}>
-
+      <HeaderComponent
+        documents={documents}
+        onLogout={onLogout}
+        open={open}
+        setOpen={setOpen}
+      />
+      <form
+        onSubmit={handleSubmit(onQuerySubmit)}
+        style={{
+          bottom: '50px',
+          left: '50%',
+          maxWidth: '700px',
+          position: 'absolute',
+          transform: 'translateX(-50%)',
+          width: '100%',
+        }}
+      >
         {isLoading ? (
           <>
             <Skeleton />
@@ -91,11 +101,19 @@ export default function Page() {
         ) : (
           <Typography>{response}</Typography>
         )}
-        
-        <QueryController control={control} label='Query' name='query' required='Query is required' type='text' />
+
+        <QueryController
+          control={control}
+          label="Query"
+          name="query"
+          required="Query is required"
+          type="text"
+        />
         {errors.query && errors.query.message}
 
-        <Button fullWidth type='submit' variant='outlined'>Submit</Button>
+        <Button fullWidth type="submit" variant="outlined">
+          Submit
+        </Button>
       </form>
     </>
   );

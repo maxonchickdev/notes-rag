@@ -1,8 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import {
-	ConflictException,
-	Injectable,
-	NotFoundException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -22,166 +22,147 @@ import { User } from './schema/user.schema';
 
 @Injectable()
 export class UserService {
+  constructor(
+    @InjectModel('User') private readonly userModel: Model<User>,
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
+    private readonly httpService: HttpService,
+  ) {}
 
-	/**
-	 *
-	 * @param userModel
-	 * @param configService
-	 * @param jwtService
-	 * @param httpService
-	 */
-	constructor(@InjectModel('User') private readonly userModel: Model<User>, private readonly configService: ConfigService, private readonly jwtService: JwtService, private readonly httpService: HttpService) {}
+  async addDocument(
+    id: Types.ObjectId,
+    addDocumentDto: AddDocumentDto,
+  ): Promise<GetResponseUserDto> {
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      id,
+      { $push: { documents: addDocumentDto.document } },
+      { new: true },
+    );
 
-	/**
-	 * @param createUserDto
-	 */
-	async createUser(createUserDto: CreateUserDto): Promise<GetResponseUserDto> {
-		const { email, password, username } = createUserDto;
+    if (!updatedUser) throw new NotFoundException('User not found');
 
-		const existingUser = await this.getUserByEmail(createUserDto.email);
+    return updatedUser;
+  }
 
-		if (existingUser) throw new ConflictException('User with the same email exists');
+  async createUser(createUserDto: CreateUserDto): Promise<GetResponseUserDto> {
+    const { email, password, username } = createUserDto;
 
-		const hashedPassword = await hash(password, parseInt(this.configService.get<string>(`${HASH_CONFIG}.saltOrRounds`)));
+    const existingUser = await this.getUserByEmail(createUserDto.email);
 
-		const newUser = new this.userModel({ email, password: hashedPassword, username });
+    if (existingUser)
+      throw new ConflictException('User with the same email exists');
 
-		const savedUser = await newUser.save();
+    const hashedPassword = await hash(
+      password,
+      parseInt(this.configService.get<string>(`${HASH_CONFIG}.saltOrRounds`)),
+    );
 
-		return new GetResponseUserDto(savedUser.toObject());
-	}
+    const newUser = new this.userModel({
+      email,
+      password: hashedPassword,
+      username,
+    });
 
-	/**
-	 * @param id
-	 */
-	async deleteUser(id: string): Promise<GetResponseUserDto> {
-		const deletedUser = await this.userModel.findByIdAndDelete(id);
-		if (!deletedUser) throw new NotFoundException('User not found');
-		return new GetResponseUserDto(deletedUser.toObject());
-	}
+    const savedUser = await newUser.save();
 
-	/**
-	 * @param email
-	 */
-	async getUserByEmail(email: string): Promise<GetResponseUserDto> {
-		const existingUser = await this.userModel.findOne({ email }).exec();
-		return existingUser;
-	}
+    return new GetResponseUserDto(savedUser.toObject());
+  }
 
-	/**
-	 *
-	 * @param id
-	 */
-	async getUserById(id: Types.ObjectId): Promise<GetResponseUserDto> {
-		const existingUser = await this.userModel.findById(id).exec();
-		if (!existingUser) throw new NotFoundException('User not found');
-		return new GetResponseUserDto(existingUser.toObject());
-	}
+  async deleteUser(id: string): Promise<GetResponseUserDto> {
+    const deletedUser = await this.userModel.findByIdAndDelete(id);
+    if (!deletedUser) throw new NotFoundException('User not found');
+    return new GetResponseUserDto(deletedUser.toObject());
+  }
 
-	/**
-	 *
-	 * @param id
-	 */
-	async logout(id: Types.ObjectId): Promise<GetResponseUserDto> {
-		const existingUser = await this.getUserById(id);
+  async getDocuments(id: Types.ObjectId): Promise<string[]> {
+    const existingUser = await this.userModel
+      .findById(id)
+      .select('documents')
+      .exec();
 
-		await this.updateUser(id.toString(), { refresh: null });
+    if (!existingUser) throw new NotFoundException('User not found');
 
-		return new GetResponseUserDto(existingUser);
-	}
+    return existingUser.documents;
+  }
 
-	/**
-	 *
-	 * @param signInUserDto
-	 */
-	async signIn(signInUserDto: SignInUserDto): Promise<{ access: string, refresh: string }> {
-		const existingUser = await this.getUserByEmail(signInUserDto.email);
+  async getRagResponse(queryDto: QueryDto, id: Types.ObjectId) {
+    const documents = await this.getDocuments(id);
+    const res = await this.httpService.axiosRef<string>({
+      baseURL: 'https://e466-34-23-168-93.ngrok-free.app',
+      data: {
+        documents: documents,
+        query: queryDto.query,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      url: '/predict',
+    });
+    return res.data;
+  }
 
-		const payload = {
-			_id: existingUser._id.toString()
-		};
+  async getUserByEmail(email: string): Promise<GetResponseUserDto> {
+    const existingUser = await this.userModel.findOne({ email }).exec();
+    return existingUser;
+  }
 
-		const accessToken = await this.jwtService.signAsync(payload);
+  async getUserById(id: Types.ObjectId): Promise<GetResponseUserDto> {
+    const existingUser = await this.userModel.findById(id).exec();
+    if (!existingUser) throw new NotFoundException('User not found');
+    return new GetResponseUserDto(existingUser.toObject());
+  }
 
-		const refreshToken = await this.jwtService.signAsync(payload, {
-			expiresIn: this.configService.get<string>(`${JWT_REFRESH_CONFIG}.refresh.expiresIn`),
-			secret: this.configService.get<string>('refresh.secret')
-		});
+  async logout(id: Types.ObjectId): Promise<GetResponseUserDto> {
+    const existingUser = await this.getUserById(id);
 
-		const hashedRefreshToken = await hash(refreshToken, parseInt(this.configService.get<string>(`${HASH_CONFIG}.saltOrRounds`)));
+    await this.updateUser(id.toString(), { refresh: null });
 
-		await this.updateUser(existingUser._id.toString(), { refresh: hashedRefreshToken });
+    return new GetResponseUserDto(existingUser);
+  }
 
-		return { access: accessToken, refresh: refreshToken };
-	}
+  async signIn(
+    signInUserDto: SignInUserDto,
+  ): Promise<{ access: string; refresh: string }> {
+    const existingUser = await this.getUserByEmail(signInUserDto.email);
 
-	/**
-	 * @param id
-	 * @param updateUserDto
-	 */
-	async updateUser(
-		id: string,
-		updateUserDto: UpdateUserDto
-	): Promise<GetResponseUserDto> {
-		const existingUser = await this.userModel.findByIdAndUpdate(
-			id,
-			updateUserDto,
-			{
-				new: true,
-			}
-		);
-		if (!existingUser) throw new NotFoundException('User not found');
-		return new GetResponseUserDto(existingUser.toObject());
-	}
+    const payload = {
+      _id: existingUser._id.toString(),
+    };
 
-	/**
-	 *
-	 * @param id
-	 * @param addDocumentDto
-	 */
-	async addDocument(id: Types.ObjectId, addDocumentDto: AddDocumentDto): Promise<GetResponseUserDto> {
-		const updatedUser = await this.userModel.findByIdAndUpdate(
-			id,
-			{ $push: { documents: addDocumentDto.document } },
-			{ new: true }
-		);
+    const accessToken = await this.jwtService.signAsync(payload);
 
-		if(!updatedUser) throw new NotFoundException('User not found');
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: this.configService.get<string>(
+        `${JWT_REFRESH_CONFIG}.refresh.expiresIn`,
+      ),
+      secret: this.configService.get<string>('refresh.secret'),
+    });
 
-		return updatedUser;
-	}
+    const hashedRefreshToken = await hash(
+      refreshToken,
+      parseInt(this.configService.get<string>(`${HASH_CONFIG}.saltOrRounds`)),
+    );
 
-	/**
-	 *
-	 * @param id
-	 */
-	async getDocuments(id: Types.ObjectId): Promise<string[]> {
-		const existingUser = await this.userModel.findById(id).select('documents').exec();
+    await this.updateUser(existingUser._id.toString(), {
+      refresh: hashedRefreshToken,
+    });
 
-		if(!existingUser) throw new NotFoundException('User not found');
+    return { access: accessToken, refresh: refreshToken };
+  }
 
-		return existingUser.documents;
-	}
-
-	/**
-	 *
-	 * @param queryDto
-	 * @param id
-	 */
-	async getRagResponse(queryDto: QueryDto, id: Types.ObjectId) {
-		const documents = await this.getDocuments(id);
-		const res = await this.httpService.axiosRef<string>({
-			baseURL: 'https://e466-34-23-168-93.ngrok-free.app',
-			data: {
-				documents: documents,
-				query: queryDto.query
-			},
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			method: 'POST',
-			url: '/predict',
-		});
-		return res.data;
-	}
+  async updateUser(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<GetResponseUserDto> {
+    const existingUser = await this.userModel.findByIdAndUpdate(
+      id,
+      updateUserDto,
+      {
+        new: true,
+      },
+    );
+    if (!existingUser) throw new NotFoundException('User not found');
+    return new GetResponseUserDto(existingUser.toObject());
+  }
 }

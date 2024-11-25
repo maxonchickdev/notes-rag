@@ -11,39 +11,42 @@ import { SERVER_CONFIG } from './config/server.config';
  *
  */
 async function bootstrap() {
-	const app = await NestFactory.create<INestApplication>(AppModule);
+  const app = await NestFactory.create<INestApplication>(AppModule);
 
-	const configService = app.get<ConfigService>(ConfigService);
+  const configService = app.get<ConfigService>(ConfigService);
 
-	app.enableCors({
-		credentials: true,
-		methods: ['GET', 'POST', 'PUT', 'DELETE'],
-		origin: ['http://localhost:4200', 'https://e466-34-23-168-93.ngrok-free.app'],
-	});
+  app.enableCors({
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: [
+      'http://localhost:4200',
+      'https://e466-34-23-168-93.ngrok-free.app',
+    ],
+  });
 
-	app.use(cookieParser());
+  app.use(cookieParser());
 
-	app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe());
 
-	const host: string = configService.get<string>(`${SERVER_CONFIG}.host`);
-	const port: string = configService.get<string>(`${SERVER_CONFIG}.port`);
+  const host: string = configService.get<string>(`${SERVER_CONFIG}.host`);
+  const port: string = configService.get<string>(`${SERVER_CONFIG}.port`);
 
-	const swaggerConfig = new DocumentBuilder()
-		.setTitle('notes-rag')
-		.setDescription('notes-rag description')
-		.setVersion('0.0.1')
-		.addServer(`http://${host}:${port}/`, 'Local enviroment')
-		.build();
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('notes-rag')
+    .setDescription('notes-rag description')
+    .setVersion('0.0.1')
+    .addServer(`http://${host}:${port}/`, 'Local enviroment')
+    .build();
 
-	const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
 
-	SwaggerModule.setup('/', app, document, {
-		customSiteTitle: 'notes-rag',
-	});
+  SwaggerModule.setup('/', app, document, {
+    customSiteTitle: 'notes-rag',
+  });
 
-	await app.listen(parseInt(port, 10));
+  await app.listen(parseInt(port, 10));
 
-	Logger.log(`🚀 Application is running on: http://${host}:${port}/`);
+  Logger.log(`🚀 Application is running on: http://${host}:${port}/`);
 }
 
 bootstrap();

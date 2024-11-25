@@ -10,33 +10,32 @@ import { AddDocumentComponent } from '../add-document-controller/add-document-co
 import { DocumentComponent } from '../document/document.component';
 
 interface Props {
-  open: boolean,
-  setOpen: (open: boolean) => void
-  documents: string[]
+  documents: string[];
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-/**
- *
- * @param root0
- * @param root0.open
- * @param root0.setOpen
- * @param root0.documents
- */
 export const DrawerComponent: FC<Props> = ({ documents, open, setOpen }) => {
   const [err, setErr] = useState<string>('');
-  const { control, formState: { errors }, handleSubmit } = useForm<IAddDocument>({
-    mode: 'onChange'
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<IAddDocument>({
+    mode: 'onChange',
   });
+
+  console.log(err);
   /**
    *
    * @param data
    */
   const onLoadDocument: SubmitHandler<IAddDocument> = async (data) => {
     try {
-      const res = await axiosInstance({
+      await axiosInstance({
         data: data,
         method: 'post',
-        url: 'user/document'
+        url: 'user/document',
       });
       documents.unshift(data.document);
     } catch (err) {
@@ -44,13 +43,21 @@ export const DrawerComponent: FC<Props> = ({ documents, open, setOpen }) => {
     }
   };
   return (
-    <Drawer anchor='left' onClose={() => setOpen(false)} open={open}>
+    <Drawer anchor="left" onClose={() => setOpen(false)} open={open}>
       <Box sx={{ p: '10px', width: '600px' }}>
-        <Typography variant='h6'>Load documents</Typography>
+        <Typography variant="h6">Load documents</Typography>
         <form onSubmit={handleSubmit(onLoadDocument)}>
-          <AddDocumentComponent control={control} label='Document' name='document' required='Document is required' type='text' />
+          <AddDocumentComponent
+            control={control}
+            label="Document"
+            name="document"
+            required="Document is required"
+            type="text"
+          />
           {errors.document && errors.document.message}
-          <Button fullWidth sx={{ my: '5px' }} type='submit' variant='outlined'>Load document</Button>
+          <Button fullWidth sx={{ my: '5px' }} type="submit" variant="outlined">
+            Load document
+          </Button>
         </form>
         <Box sx={{ mt: '20px' }}>
           {documents.length !== 0 ? (

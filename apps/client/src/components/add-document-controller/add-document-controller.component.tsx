@@ -4,11 +4,11 @@ import { FC, HTMLInputTypeAttribute } from 'react';
 import { Control, Controller } from 'react-hook-form';
 
 interface Props {
-  control: Control<IAddDocument>
-  required: string
-  name: 'document'
-  label: string
-  type: HTMLInputTypeAttribute
+  control: Control<IAddDocument>;
+  label: string;
+  name: 'document';
+  required: string;
+  type: HTMLInputTypeAttribute;
 }
 
 /**
@@ -25,7 +25,7 @@ export const AddDocumentComponent: FC<Props> = ({
   label,
   name,
   required,
-  type
+  type,
 }) => {
   return (
     <Controller
@@ -33,7 +33,8 @@ export const AddDocumentComponent: FC<Props> = ({
       name={name}
       render={({ field: { onChange, value } }) => (
         <TextField
-          defaultValue={value} fullWidth
+          defaultValue={value}
+          fullWidth
           label={label}
           multiline
           onChange={onChange}

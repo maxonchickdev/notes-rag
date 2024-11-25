@@ -9,26 +9,25 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { axiosInstance } from '../../../src/axios/axios.config';
 import { SignUpController } from '../../../src/components/sign-up-controller/sign-up-controller.component';
 
-/**
- *
- */
 export default function Page() {
   const [err, setErr] = useState<string>('');
   const router = useRouter();
-  const { control, formState: { errors }, handleSubmit } = useForm<ICreateUser>({
-    mode: 'onChange'
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<ICreateUser>({
+    mode: 'onChange',
   });
 
-  /**
-   *
-   * @param data
-   */
+  console.log(err);
+
   const onSignUpUser: SubmitHandler<ICreateUser> = async (data) => {
     try {
-      const res = await axiosInstance({
+      await axiosInstance({
         data: data,
         method: 'post',
-        url: 'user'
+        url: 'user',
       });
       router.push('/');
     } catch (err) {
@@ -37,35 +36,36 @@ export default function Page() {
   };
   return (
     <form onSubmit={handleSubmit(onSignUpUser)}>
-      <SignUpController 
-        control={control} 
-        label='Username' 
-        name='username' 
-        required='Username is required' 
-        type='text'
+      <SignUpController
+        control={control}
+        label="Username"
+        name="username"
+        required="Username is required"
+        type="text"
       />
       {errors.username && errors.username.message}
 
-      <SignUpController 
-        control={control} 
-        label='Email' 
-        name='email' 
-        required='Email is required' 
-        type='text' 
+      <SignUpController
+        control={control}
+        label="Email"
+        name="email"
+        required="Email is required"
+        type="text"
       />
       {errors.email && errors.email.message}
 
-      <SignUpController 
-        control={control} 
-        label='Password' 
-        name='password' 
-        required='Password is required' 
-        type='password'
+      <SignUpController
+        control={control}
+        label="Password"
+        name="password"
+        required="Password is required"
+        type="password"
       />
       {errors.password && errors.password.message}
 
-
-      <Button fullWidth type='submit' variant='outlined'>Sign in</Button>
+      <Button fullWidth type="submit" variant="outlined">
+        Sign in
+      </Button>
     </form>
   );
 }

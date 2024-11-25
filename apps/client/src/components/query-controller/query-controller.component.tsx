@@ -4,28 +4,19 @@ import { FC, HTMLInputTypeAttribute } from 'react';
 import { Control, Controller } from 'react-hook-form';
 
 interface Props {
-  control: Control<IQuery>
-  required: string
-  name: 'query'
-  label: string
-  type: HTMLInputTypeAttribute
+  control: Control<IQuery>;
+  label: string;
+  name: 'query';
+  required: string;
+  type: HTMLInputTypeAttribute;
 }
 
-/**
- *
- * @param root0
- * @param root0.control
- * @param root0.label
- * @param root0.name
- * @param root0.required
- * @param root0.type
- */
 export const QueryController: FC<Props> = ({
   control,
   label,
   name,
   required,
-  type
+  type,
 }) => {
   return (
     <Controller

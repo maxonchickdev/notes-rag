@@ -11,30 +11,29 @@ import { SignInStrategy } from './strategy/sign-in.strategy';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
-
 @Module({
-	controllers: [UserController],
-	exports: [UserService],
-	imports: [
-		HttpModule,
-		MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-		JwtModule.registerAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			/**
-			 *
-			 * @param configService
-			 */
-			useFactory: async(configService: ConfigService) => {
-				return {
-					secret: configService.get<string>(`${JWT_ACCESS_CONFIG}.access.secret`),
-					signOptions: {
-						expiresIn: configService.get<string>(`${JWT_ACCESS_CONFIG}.access.expiresIn`)
-					}
-				};
-			}
-		})
-	],
-	providers: [UserService, SignInStrategy, JwtStrategy]
+  controllers: [UserController],
+  exports: [UserService],
+  imports: [
+    HttpModule,
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get<string>(
+            `${JWT_ACCESS_CONFIG}.access.secret`,
+          ),
+          signOptions: {
+            expiresIn: configService.get<string>(
+              `${JWT_ACCESS_CONFIG}.access.expiresIn`,
+            ),
+          },
+        };
+      },
+    }),
+  ],
+  providers: [UserService, SignInStrategy, JwtStrategy],
 })
 export class UserModule {}
