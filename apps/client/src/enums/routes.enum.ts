@@ -1,5 +1,6 @@
 export enum ROUTES {
-  PASSWORD_RESET = 'password-reset',
+  EXPLORE_RAGS = '/explore-rags',
+  PASSWORD_RESET = '/password-reset',
   SIGN_IN = '/',
-  SIGN_UP = 'sign-up',
+  SIGN_UP = '/sign-up',
 }

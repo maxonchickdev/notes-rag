@@ -30,7 +30,7 @@ export const ResetPasswordController: FC<Props> = ({
           multiline
           onChange={onChange}
           placeholder="Email"
-          rows={2}
+          rows={1}
           size="small"
           sx={{ margin: '4px 0' }}
           type={type}

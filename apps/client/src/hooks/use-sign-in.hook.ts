@@ -3,7 +3,6 @@ import { FirebaseApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { enqueueSnackbar } from 'notistack';
-import { useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { app } from '../configs/firebase.config';
@@ -18,10 +17,6 @@ export const useSignIn = () => {
   } = useForm<ISignIn>({
     mode: 'onChange',
   });
-
-  const onPushToSignUp = useCallback(() => {
-    router.push(ROUTES.SIGN_UP);
-  }, []);
 
   const onLocalSigIn = async (token: string, data: ISignIn) => {
     await fetch(
@@ -55,14 +50,11 @@ export const useSignIn = () => {
     return credential;
   };
 
-  const onResetPassword = useCallback(() => {
-    router.push(ROUTES.PASSWORD_RESET);
-  }, []);
-
   const onSignIn: SubmitHandler<ISignIn> = async (data) => {
     try {
       const credential = await onFirebaseSignIn(app, data.email, data.password);
-      await onLocalSigIn(await credential.user.getIdToken(), data);
+      // await onLocalSigIn(await credential.user.getIdToken(), data);
+      router.push(ROUTES.EXPLORE_RAGS);
     } catch (err) {
       enqueueSnackbar((err as Error).message, {
         variant: 'error',
@@ -74,8 +66,6 @@ export const useSignIn = () => {
     control,
     errors,
     handleSubmit,
-    onPushToSignUp,
-    onResetPassword,
     onSignIn,
   };
 };
