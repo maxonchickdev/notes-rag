@@ -2,7 +2,7 @@
 
 import { Button } from '@mui/material';
 
-import { SignUpController } from '../../../src/components/sign-up-controller/sign-up-controller.component';
+import { ResetPasswordController } from '../../../src/components/reset-password-controller/reset-password-controller.component';
 import { usePasswordReset } from '../../../src/hooks/use-password.hook';
 
 export default function Page() {
@@ -10,7 +10,7 @@ export default function Page() {
 
   return (
     <form onSubmit={handleSubmit(onResetPassword)}>
-      <SignUpController
+      <ResetPasswordController
         control={control}
         label="Email"
         name="email"
