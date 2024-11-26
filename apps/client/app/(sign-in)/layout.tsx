@@ -1,7 +1,11 @@
 import { Box } from '@mui/material';
 import { ReactNode } from 'react';
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+interface Props {
+  children: ReactNode;
+}
+
+export default function RootLayout({ children }: Props) {
   return (
     <Box
       sx={{

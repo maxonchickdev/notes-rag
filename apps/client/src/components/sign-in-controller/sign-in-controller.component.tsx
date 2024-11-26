@@ -1,10 +1,10 @@
 import { TextField } from '@mui/material';
-import { ISignInUser } from '@notes-rag/shared';
+import { ISignIn } from '@notes-rag/shared';
 import { FC, HTMLInputTypeAttribute } from 'react';
 import { Control, Controller } from 'react-hook-form';
 
 interface Props {
-  control: Control<ISignInUser>;
+  control: Control<ISignIn>;
   label: string;
   name: 'email' | 'password';
   required: string;
@@ -22,9 +22,8 @@ export const SignInController: FC<Props> = ({
     <Controller
       control={control}
       name={name}
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { onChange, value = '' } }) => (
         <TextField
-          defaultValue={value}
           fullWidth
           label={label}
           onChange={onChange}

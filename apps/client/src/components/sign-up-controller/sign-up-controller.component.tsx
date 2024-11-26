@@ -1,10 +1,10 @@
 import { TextField } from '@mui/material';
-import { ICreateUser } from '@notes-rag/shared';
+import { ISignUp } from '@notes-rag/shared';
 import { FC, HTMLInputTypeAttribute } from 'react';
 import { Control, Controller } from 'react-hook-form';
 
 interface Props {
-  control: Control<ICreateUser>;
+  control: Control<ISignUp>;
   label: string;
   name: 'email' | 'password' | 'username';
   required: string;
@@ -22,9 +22,8 @@ export const SignUpController: FC<Props> = ({
     <Controller
       control={control}
       name={name}
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { onChange, value = '' } }) => (
         <TextField
-          defaultValue={value}
           fullWidth
           label={label}
           onChange={onChange}

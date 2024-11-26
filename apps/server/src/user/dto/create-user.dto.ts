@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ICreateUser } from '@notes-rag/shared';
+import { ISignUp } from '@notes-rag/shared';
 import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 
 /**
  *
  */
-export class CreateUserDto implements ICreateUser {
+export class CreateUserDto implements ISignUp {
   @ApiProperty({
     description: 'The email of the user',
     example: 'testEmail',

@@ -1,63 +1,61 @@
 'use client';
 
-import { Button } from '@mui/material';
-import { ISignInUser } from '@notes-rag/shared';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { Box, Button } from '@mui/material';
+import Link from 'next/link';
 
-import { axiosInstance } from '../../src/axios/axios.config';
 import { SignInController } from '../../src/components/sign-in-controller/sign-in-controller.component';
+import { ROUTES } from '../../src/enums/routes.enum';
+import { useSignIn } from '../../src/hooks/use-sign-in.hook';
 
 export default function Page() {
-  const router = useRouter();
-  const [err, setErr] = useState<string>('');
   const {
     control,
-    formState: { errors },
+    errors,
     handleSubmit,
-  } = useForm<ISignInUser>({
-    mode: 'onChange',
-  });
-
-  console.log(err);
-
-  const onSubmit: SubmitHandler<ISignInUser> = async (data) => {
-    try {
-      await axiosInstance({
-        data: data,
-        method: 'post',
-        url: 'user/sign-in',
-      });
-      router.push('explore-rags');
-    } catch (err) {
-      setErr(err as string);
-    }
-  };
+    onPushToSignUp,
+    onResetPassword,
+    onSignIn,
+  } = useSignIn();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <SignInController
-        control={control}
-        label="Email"
-        name="email"
-        required="Email is required"
-        type="text"
-      />
-      {errors.email && errors.email.message}
+    <>
+      <form onSubmit={handleSubmit(onSignIn)} style={{ marginBottom: '10px' }}>
+        <SignInController
+          control={control}
+          label="Email"
+          name="email"
+          required="Email is required"
+          type="text"
+        />
+        {errors.email && errors.email.message}
 
-      <SignInController
-        control={control}
-        label="Password"
-        name="password"
-        required="Password is required"
-        type="password"
-      />
-      {errors.password && errors.password.message}
+        <SignInController
+          control={control}
+          label="Password"
+          name="password"
+          required="Password is required"
+          type="password"
+        />
+        {errors.password && errors.password.message}
 
-      <Button fullWidth type="submit" variant="outlined">
-        Sign in
-      </Button>
-    </form>
+        <Button fullWidth type="submit" variant="outlined">
+          Sign in
+        </Button>
+      </form>
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Link href={ROUTES.SIGN_UP} onClick={onPushToSignUp}>
+          Create account
+        </Link>
+        <Link href={ROUTES.PASSWORD_RESET} onClick={onResetPassword}>
+          Reset password
+        </Link>
+      </Box>
+    </>
   );
 }

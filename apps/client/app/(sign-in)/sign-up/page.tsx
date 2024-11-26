@@ -1,41 +1,14 @@
 'use client';
 
 import { Button } from '@mui/material';
-import { ICreateUser } from '@notes-rag/shared';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { axiosInstance } from '../../../src/axios/axios.config';
 import { SignUpController } from '../../../src/components/sign-up-controller/sign-up-controller.component';
+import { useSignUp } from '../../../src/hooks/use-sign-up.hook';
 
 export default function Page() {
-  const [err, setErr] = useState<string>('');
-  const router = useRouter();
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-  } = useForm<ICreateUser>({
-    mode: 'onChange',
-  });
-
-  console.log(err);
-
-  const onSignUpUser: SubmitHandler<ICreateUser> = async (data) => {
-    try {
-      await axiosInstance({
-        data: data,
-        method: 'post',
-        url: 'user',
-      });
-      router.push('/');
-    } catch (err) {
-      setErr(err as string);
-    }
-  };
+  const { control, errors, handleSubmit, onSignUp } = useSignUp();
   return (
-    <form onSubmit={handleSubmit(onSignUpUser)}>
+    <form onSubmit={handleSubmit(onSignUp)}>
       <SignUpController
         control={control}
         label="Username"

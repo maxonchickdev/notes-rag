@@ -2,18 +2,14 @@
 
 import { Button, Skeleton, Typography } from '@mui/material';
 import { IQuery } from '@notes-rag/shared';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { axiosInstance } from '../../src/axios/axios.config';
 import { HeaderComponent } from '../../src/components/header/header-component';
 import { QueryController } from '../../src/components/query-controller/query-controller.component';
 
 export default function Page() {
-  const router = useRouter();
   const [documents, setDocuments] = useState<string[]>([]);
-  const [err, setErr] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<string>('');
@@ -25,60 +21,15 @@ export default function Page() {
     mode: 'onChange',
   });
 
-  console.log(err);
-
-  useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        const res = await axiosInstance({
-          method: 'get',
-          url: 'user/document',
-        });
-        setDocuments(res.data);
-      } catch (error) {
-        setErr(error as string);
-      }
-    };
-
-    fetchDocuments();
-  }, []);
-
-  const onLogout = async () => {
-    try {
-      await axiosInstance({
-        method: 'get',
-        url: 'user/logout',
-      });
-      router.push('/');
-    } catch (err) {
-      setErr(err as string);
-    }
-  };
-
-  /**
-   *
-   * @param data
-   */
   const onQuerySubmit: SubmitHandler<IQuery> = async (data) => {
-    try {
-      setIsLoading(true);
-      const res = await axiosInstance({
-        data: data,
-        method: 'post',
-        url: 'user/prediction',
-      });
-      setIsLoading(false);
-      setResponse(res.data.prediction);
-    } catch (err) {
-      setErr(err as string);
-    }
+    console.log(data);
   };
 
   return (
     <>
       <HeaderComponent
         documents={documents}
-        onLogout={onLogout}
+        onLogout={() => console.log('logout')}
         open={open}
         setOpen={setOpen}
       />

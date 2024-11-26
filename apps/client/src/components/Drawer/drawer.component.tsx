@@ -2,10 +2,9 @@
 
 import { Box, Button, Drawer, Typography } from '@mui/material';
 import { IAddDocument } from '@notes-rag/shared';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { axiosInstance } from '../../axios/axios.config';
 import { AddDocumentComponent } from '../add-document-controller/add-document-controller.component';
 import { DocumentComponent } from '../document/document.component';
 
@@ -16,7 +15,6 @@ interface Props {
 }
 
 export const DrawerComponent: FC<Props> = ({ documents, open, setOpen }) => {
-  const [err, setErr] = useState<string>('');
   const {
     control,
     formState: { errors },
@@ -25,22 +23,8 @@ export const DrawerComponent: FC<Props> = ({ documents, open, setOpen }) => {
     mode: 'onChange',
   });
 
-  console.log(err);
-  /**
-   *
-   * @param data
-   */
   const onLoadDocument: SubmitHandler<IAddDocument> = async (data) => {
-    try {
-      await axiosInstance({
-        data: data,
-        method: 'post',
-        url: 'user/document',
-      });
-      documents.unshift(data.document);
-    } catch (err) {
-      setErr(err as string);
-    }
+    console.log(data);
   };
   return (
     <Drawer anchor="left" onClose={() => setOpen(false)} open={open}>

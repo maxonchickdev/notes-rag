@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@notes-rag/shared": ["libs/shared/src/index.ts"]
+      "@notes-rag/shared": ["libs/shared/src/index.ts"],
+      "@notes-rag/client/*": ["apps/client/src/*"],
     }
   },
   "exclude": ["node_modules", "tmp"]
