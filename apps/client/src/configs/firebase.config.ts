@@ -1,3 +1,5 @@
+import { initializeApp } from 'firebase/app';
+
 export const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
   appId: process.env.FIREBASE_APP_ID,
@@ -7,3 +9,5 @@ export const firebaseConfig = {
   projectId: process.env.FIREBASE_PROJECT_ID,
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 };
+
+export const app = initializeApp(firebaseConfig);
