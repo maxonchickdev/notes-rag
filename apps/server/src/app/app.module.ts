@@ -3,26 +3,20 @@ import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { DATABASE_CONFIG } from './config/database.config';
-import databaseConfig from './config/database.config';
-import hashConfig from './config/hash.config';
-import jwtAccessConfig from './config/jwt-access.config';
-import jwtRefreshConfig from './config/jwt-refresh.config';
-import serverConfig from './config/server.config';
-import { UserModule } from './user/user.module';
+import { DATABASE_CONFIG } from '../common/config/database.config';
+import databaseConfig from '../common/config/database.config';
+import firebaseConfig from '../common/config/firebase.config';
+import serverConfig from '../common/config/server.config';
+import { FirebaseModule } from './firebase/firebase.module';
+import { FirebaseService } from './firebase/firebase.service';
+import { UsersModule } from './user/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
-      load: [
-        databaseConfig,
-        serverConfig,
-        hashConfig,
-        jwtAccessConfig,
-        jwtRefreshConfig,
-      ],
+      load: [databaseConfig, serverConfig, firebaseConfig],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -33,7 +27,9 @@ import { UserModule } from './user/user.module';
         };
       },
     }),
-    UserModule,
+    UsersModule,
+    FirebaseModule,
   ],
+  providers: [FirebaseService],
 })
 export class AppModule {}

@@ -2,10 +2,9 @@ import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import cookieParser from 'cookie-parser';
 
-import { AppModule } from './app.module';
-import { SERVER_CONFIG } from './config/server.config';
+import { AppModule } from './app/app.module';
+import { SERVER_CONFIG } from './common/config/server.config';
 
 /**
  *
@@ -24,8 +23,6 @@ async function bootstrap() {
     ],
   });
 
-  app.use(cookieParser());
-
   app.useGlobalPipes(new ValidationPipe());
 
   const host: string = configService.get<string>(`${SERVER_CONFIG}.host`);
@@ -36,6 +33,7 @@ async function bootstrap() {
     .setDescription('notes-rag description')
     .setVersion('0.0.1')
     .addServer(`http://${host}:${port}/`, 'Local enviroment')
+    .addBearerAuth({ in: 'header', scheme: 'bearer', type: 'http' })
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

@@ -9,9 +9,6 @@ export interface IUser extends Document {
   readonly username: string;
 }
 
-/**
- *
- */
 @Schema({ timestamps: true })
 export class User {
   @Prop({
@@ -21,29 +18,12 @@ export class User {
   documents: string[];
 
   @Prop({
+    index: true,
     required: true,
     type: String,
     unique: true,
   })
-  email: string;
-
-  @Prop({
-    required: true,
-    type: String,
-  })
-  password: string;
-
-  @Prop({
-    default: null,
-    type: String,
-  })
-  refresh: string;
-
-  @Prop({
-    required: true,
-    type: String,
-  })
-  username: string;
+  uid: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
