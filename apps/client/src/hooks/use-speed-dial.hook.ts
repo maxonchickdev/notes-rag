@@ -16,17 +16,14 @@ export const useSpeedDial = () => {
   }, []);
 
   const onPushToSignUp = useCallback(() => {
-    console.log('sign up push');
     router.push(ROUTES.SIGN_UP);
   }, []);
 
   const onPushToSignIn = useCallback(() => {
-    console.log('sign in push');
     router.push(ROUTES.SIGN_IN);
   }, []);
 
   const onPushToResetPassword = useCallback(() => {
-    console.log('reset password push');
     router.push(ROUTES.PASSWORD_RESET);
   }, []);
 

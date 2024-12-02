@@ -9,7 +9,7 @@ interface Props {
 
 export const NotistackProvider: FC<Props> = ({ children }) => {
   return (
-    <SnackbarProvider autoHideDuration={2000} maxSnack={4}>
+    <SnackbarProvider autoHideDuration={3000} maxSnack={6}>
       {children}
     </SnackbarProvider>
   );

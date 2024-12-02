@@ -16,6 +16,9 @@ const nextConfig = {
     FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
     FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+
+    ROUTE_SIGN_UP: process.env.ROUTE_SIGN_UP,
+    ROUTE_SIGN_IN: process.env.ROUTE_SIGN_IN,
   },
   nx: {
     svgr: false,

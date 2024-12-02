@@ -7,6 +7,7 @@ import { useSignUp } from '../../../src/hooks/use-sign-up.hook';
 
 export default function Page() {
   const { control, errors, handleSubmit, onSignUp } = useSignUp();
+
   return (
     <form onSubmit={handleSubmit(onSignUp)}>
       <SignUpController

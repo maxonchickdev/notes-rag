@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ICreateUserWithUid } from '@notes-rag/shared';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 /**
  *
  */
-export class CreateUserDto {
+export class CreateUserDto implements ICreateUserWithUid {
   @ApiProperty({
     description: 'Unique user id',
     example: 'vKSpaTpqnVdJIFJlOKZa5LfL1hC2',

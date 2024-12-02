@@ -1,4 +1,4 @@
-import { ISignUp } from '@notes-rag/shared';
+import { ICreateUserWithUid, ISignUp } from '@notes-rag/shared';
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -29,22 +29,27 @@ export const useSignUp = () => {
         data.password,
       );
 
+      const createUserWithUId: ICreateUserWithUid = {
+        uId: credential.user.uid,
+      };
+
       await sendEmailVerification(credential.user);
 
-      enqueueSnackbar(`Check enail ${data.email}`, {
-        variant: 'success',
-      });
-
       await fetch(
-        `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/user`,
+        `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/${process.env.ROUTE_SIGN_UP}`,
         {
-          body: JSON.stringify(data),
+          body: JSON.stringify(createUserWithUId),
           headers: {
             'Content-Type': 'application/json',
           },
           method: 'POST',
         },
       );
+
+      enqueueSnackbar(`Check enail ${data.email}`, {
+        variant: 'success',
+      });
+
       router.push(ROUTES.SIGN_IN);
     } catch (err) {
       enqueueSnackbar((err as Error).message, {

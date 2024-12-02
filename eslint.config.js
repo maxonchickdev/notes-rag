@@ -44,6 +44,7 @@ module.exports = [
     ignores: ['./apps/client/.next', '.next', './node_modules', './src/assets'],
     plugins: { importPlugin, perfectionist, 'unused-imports': unusedImports },
     rules: {
+      '@typescript-eslint/no-empty-function': 'off',
       'prettier/prettier': [
         'error',
         {

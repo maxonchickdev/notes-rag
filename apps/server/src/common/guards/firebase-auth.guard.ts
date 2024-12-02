@@ -7,7 +7,7 @@ import {
 import { Observable } from 'rxjs';
 
 import { FirebaseService } from '../../app/firebase/firebase.service';
-import { UsersService } from '../../app/user/users.service';
+import { UsersService } from '../../app/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -19,11 +19,8 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Observable<boolean> | Promise<boolean> {
-    console.log('token');
     const request = context.switchToHttp().getRequest();
     const token = request.headers.authorization?.split(' ')[1];
-
-    console.log(request.headers);
 
     return this.validateToken(token, context);
   }
@@ -34,13 +31,15 @@ export class AuthGuard implements CanActivate {
   ): Promise<boolean> {
     try {
       const request = context.switchToHttp().getRequest();
+
       const firebaseUser = await this.firebaseService.verifyIdToken(token);
 
       const user = await this.usersService.getUserByUId(firebaseUser.uid);
 
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
+      if (!user)
+        throw new NotFoundException(
+          `User with id ${firebaseUser.uid} not found`,
+        );
 
       request.user = user;
 

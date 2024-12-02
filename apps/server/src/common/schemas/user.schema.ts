@@ -23,7 +23,7 @@ export class User {
     type: String,
     unique: true,
   })
-  uid: string;
+  uId: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

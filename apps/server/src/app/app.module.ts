@@ -8,8 +8,7 @@ import databaseConfig from '../common/config/database.config';
 import firebaseConfig from '../common/config/firebase.config';
 import serverConfig from '../common/config/server.config';
 import { FirebaseModule } from './firebase/firebase.module';
-import { FirebaseService } from './firebase/firebase.service';
-import { UsersModule } from './user/users.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -18,6 +17,7 @@ import { UsersModule } from './user/users.module';
       isGlobal: true,
       load: [databaseConfig, serverConfig, firebaseConfig],
     }),
+    FirebaseModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -28,8 +28,6 @@ import { UsersModule } from './user/users.module';
       },
     }),
     UsersModule,
-    FirebaseModule,
   ],
-  providers: [FirebaseService],
 })
 export class AppModule {}
