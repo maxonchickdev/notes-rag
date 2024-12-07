@@ -15,8 +15,8 @@ async function bootstrap() {
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     origin: [
-      'http://localhost:4200',
-      'https://e466-34-23-168-93.ngrok-free.app',
+      `http://${configService.get<string>(`${SERVER_CONFIG}.host`)}:${configService.get<string>(`${SERVER_CONFIG}.port`)}`,
+      'http://localhost:4201',
     ],
   });
 

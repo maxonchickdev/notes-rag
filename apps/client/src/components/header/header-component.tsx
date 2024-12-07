@@ -3,20 +3,23 @@ import { Box, Button, Typography } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { FC } from 'react';
 
+import { COLORS } from '../../enums/colors.enum';
 import { DrawerComponent } from '../drawer/drawer.component';
 
 interface Props {
   documents: string[];
+  handleCloseDrawer: () => void;
+  handleOpenDrawer: () => void;
   onLogout: () => void;
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  openDrawer: boolean;
 }
 
 export const HeaderComponent: FC<Props> = ({
   documents,
+  handleCloseDrawer,
+  handleOpenDrawer,
   onLogout,
-  open,
-  setOpen,
+  openDrawer,
 }) => {
   return (
     <Box
@@ -29,16 +32,24 @@ export const HeaderComponent: FC<Props> = ({
         px: '10px',
       }}
     >
-      <Box sx={{ alignItems: 'center', display: 'flex', gap: '20px' }}>
-        <IconButton onClick={() => setOpen(true)}>
-          <TuneIcon color="success" fontSize="large" />
-        </IconButton>
-        <Typography variant="h6">Explore RAGs</Typography>
-      </Box>
+      <IconButton
+        onClick={handleOpenDrawer}
+        sx={{ borderRadius: '3px', display: 'flex', gap: '5px' }}
+      >
+        <Typography sx={{ color: COLORS.BLACK, fontSize: '16px' }}>
+          Connect notion api
+        </Typography>
+        <TuneIcon color="primary" fontSize="medium" />
+      </IconButton>
       <Button color="primary" onClick={onLogout}>
         Logout
       </Button>
-      <DrawerComponent documents={documents} open={open} setOpen={setOpen} />
+      <DrawerComponent
+        documents={documents}
+        handleCloseDrawer={handleCloseDrawer}
+        handleOpenDrawer={handleOpenDrawer}
+        openDrawer={openDrawer}
+      />
     </Box>
   );
 };

@@ -1,21 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
+import { DocumentDto } from '../../app/notion/dto/document.dto';
+
 export interface IUser extends Document {
   readonly _id: Types.ObjectId;
   readonly email: string;
+  readonly notionApiToken: string;
   readonly password: string;
-  readonly refresh: string;
-  readonly username: string;
 }
 
 @Schema({ timestamps: true })
 export class User {
   @Prop({
+    _id: false,
     required: false,
-    type: [String],
+    type: [DocumentDto],
   })
-  documents: string[];
+  documents: DocumentDto[];
+
+  @Prop({
+    required: false,
+    type: String,
+    unique: true,
+  })
+  notionApiToken: string;
 
   @Prop({
     index: true,

@@ -1,17 +1,17 @@
 import { TextField } from '@mui/material';
-import { IAddDocument } from '@notes-rag/shared';
+import { INotionApiToken } from '@notes-rag/shared';
 import { FC, HTMLInputTypeAttribute } from 'react';
 import { Control, Controller } from 'react-hook-form';
 
 interface Props {
-  control: Control<IAddDocument>;
+  control: Control<INotionApiToken>;
   label: string;
-  name: 'document';
+  name: 'token';
   required: string;
   type: HTMLInputTypeAttribute;
 }
 
-export const AddDocumentComponent: FC<Props> = ({
+export const NotionApiTokenController: FC<Props> = ({
   control,
   label,
   name,
@@ -29,8 +29,8 @@ export const AddDocumentComponent: FC<Props> = ({
           label={label}
           multiline
           onChange={onChange}
-          placeholder="Load document"
-          rows={2}
+          placeholder="Paste notion integration token"
+          rows={1}
           size="small"
           sx={{ margin: '4px 0' }}
           type={type}

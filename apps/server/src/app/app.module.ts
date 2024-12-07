@@ -6,8 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DATABASE_CONFIG } from '../common/config/database.config';
 import databaseConfig from '../common/config/database.config';
 import firebaseConfig from '../common/config/firebase.config';
+import huggingFaceConfig from '../common/config/hugging-face.config';
+import notionConfig from '../common/config/notion.config';
 import serverConfig from '../common/config/server.config';
 import { FirebaseModule } from './firebase/firebase.module';
+import { NotionModule } from './notion/notion.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -15,7 +18,13 @@ import { UsersModule } from './users/users.module';
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
-      load: [databaseConfig, serverConfig, firebaseConfig],
+      load: [
+        databaseConfig,
+        serverConfig,
+        firebaseConfig,
+        notionConfig,
+        huggingFaceConfig,
+      ],
     }),
     FirebaseModule,
     MongooseModule.forRootAsync({
@@ -28,6 +37,7 @@ import { UsersModule } from './users/users.module';
       },
     }),
     UsersModule,
+    NotionModule,
   ],
 })
 export class AppModule {}

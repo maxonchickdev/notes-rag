@@ -2,7 +2,7 @@
 
 import { Button, Skeleton, Typography } from '@mui/material';
 import { IQuery } from '@notes-rag/shared';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { HeaderComponent } from '../../src/components/header/header-component';
@@ -10,9 +10,18 @@ import { QueryController } from '../../src/components/query-controller/query-con
 
 export default function Page() {
   const [documents, setDocuments] = useState<string[]>([]);
-  const [open, setOpen] = useState<boolean>(false);
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<string>('');
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const handleOpenModal = useCallback(() => {
+    setOpenModal(true);
+  }, []);
+
+  const handleOpenDrawer = useCallback(() => {
+    setOpenDrawer(true);
+  }, []);
 
   const {
     control,
@@ -26,13 +35,18 @@ export default function Page() {
     console.log(data);
   };
 
+  const handleCloseDrawer = useCallback(() => {
+    setOpenDrawer(false);
+  }, []);
+
   return (
     <>
       <HeaderComponent
         documents={documents}
+        handleCloseDrawer={handleCloseDrawer}
+        handleOpenDrawer={handleOpenDrawer}
         onLogout={() => console.log('logout')}
-        open={open}
-        setOpen={setOpen}
+        openDrawer={openDrawer}
       />
       <form
         onSubmit={handleSubmit(onQuerySubmit)}

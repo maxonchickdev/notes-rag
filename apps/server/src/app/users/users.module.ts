@@ -10,6 +10,7 @@ import { UsersService } from './users.service';
 
 @Module({
   controllers: [UsersController],
+  exports: [UsersService],
   imports: [
     FirebaseModule,
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),

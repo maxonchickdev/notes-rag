@@ -1,20 +1,26 @@
 'use client';
 
-import { Box, Button, Drawer, Typography } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { Box, Button, Drawer, IconButton, Typography } from '@mui/material';
 import { IAddDocument } from '@notes-rag/shared';
-import { FC } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { FC, useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
-import { AddDocumentComponent } from '../add-document-controller/add-document-controller.component';
-import { DocumentComponent } from '../document/document.component';
+import { ModalComponent } from '../modal/modal.component';
 
 interface Props {
   documents: string[];
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  handleCloseDrawer: () => void;
+  handleOpenDrawer: () => void;
+  openDrawer: boolean;
 }
 
-export const DrawerComponent: FC<Props> = ({ documents, open, setOpen }) => {
+export const DrawerComponent: FC<Props> = ({
+  documents,
+  handleCloseDrawer,
+  handleOpenDrawer,
+  openDrawer,
+}) => {
   const {
     control,
     formState: { errors },
@@ -23,35 +29,44 @@ export const DrawerComponent: FC<Props> = ({ documents, open, setOpen }) => {
     mode: 'onChange',
   });
 
-  const onLoadDocument: SubmitHandler<IAddDocument> = async (data) => {
-    console.log(data);
-  };
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const handleCloseModal = useCallback(() => {
+    setOpenModal(false);
+  }, []);
+
+  const handleOpenModal = useCallback(() => {
+    setOpenModal(true);
+  }, []);
+
   return (
-    <Drawer anchor="left" onClose={() => setOpen(false)} open={open}>
+    <Drawer anchor="left" onClose={handleOpenDrawer} open={openDrawer}>
       <Box sx={{ p: '10px', width: '600px' }}>
-        <Typography variant="h6">Load documents</Typography>
-        <form onSubmit={handleSubmit(onLoadDocument)}>
-          <AddDocumentComponent
-            control={control}
-            label="Document"
-            name="document"
-            required="Document is required"
-            type="text"
-          />
-          {errors.document && errors.document.message}
-          <Button fullWidth sx={{ my: '5px' }} type="submit" variant="outlined">
-            Load document
-          </Button>
-        </form>
-        <Box sx={{ mt: '20px' }}>
-          {documents.length !== 0 ? (
-            documents.map((document, index) => (
-              <DocumentComponent document={document} key={index} />
-            ))
-          ) : (
-            <Typography>No documents</Typography>
-          )}
+        <Box
+          sx={{
+            alignItems: 'center',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography variant="h6">Load documents</Typography>
+          <IconButton onClick={handleCloseDrawer} sx={{ borderRadius: '3px' }}>
+            <CloseIcon fontSize="medium" />
+          </IconButton>
         </Box>
+        <Button
+          fullWidth
+          onClick={handleOpenModal}
+          sx={{ my: '5px' }}
+          variant="outlined"
+        >
+          Add api token
+        </Button>
+        <ModalComponent
+          handleCloseModal={handleCloseModal}
+          handleOpenModal={handleOpenDrawer}
+          openModal={openModal}
+        />
       </Box>
     </Drawer>
   );
