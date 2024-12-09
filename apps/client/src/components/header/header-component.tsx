@@ -8,11 +8,10 @@ import { DrawerComponent } from '../drawer/drawer.component';
 import { ModalComponent } from '../modal/modal.component';
 
 interface Props {
-  documents: string[];
   onLogout: () => void;
 }
 
-export const HeaderComponent: FC<Props> = ({ documents, onLogout }) => {
+export const HeaderComponent: FC<Props> = ({ onLogout }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
@@ -66,7 +65,6 @@ export const HeaderComponent: FC<Props> = ({ documents, onLogout }) => {
         </Button>
       </Box>
       <DrawerComponent
-        documents={documents}
         handleCloseDrawer={handleCloseDrawer}
         handleOpenDrawer={handleOpenDrawer}
         openDrawer={openDrawer}

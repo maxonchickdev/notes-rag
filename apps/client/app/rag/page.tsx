@@ -9,7 +9,6 @@ import { HeaderComponent } from '../../src/components/header/header-component';
 import { QueryController } from '../../src/components/query-controller/query-controller.component';
 
 export default function Page() {
-  const [documents, setDocuments] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<string>('');
 
@@ -27,10 +26,7 @@ export default function Page() {
 
   return (
     <>
-      <HeaderComponent
-        documents={documents}
-        onLogout={() => console.log('logout')}
-      />
+      <HeaderComponent onLogout={() => console.log('logout')} />
       <form
         onSubmit={handleSubmit(onQuerySubmit)}
         style={{
