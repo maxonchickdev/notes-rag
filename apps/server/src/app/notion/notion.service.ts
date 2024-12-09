@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
@@ -11,6 +11,8 @@ import { DocumentDto } from './dto/document.dto';
 
 @Injectable()
 export class NotionService {
+  private readonly logger = new Logger(NotionService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
@@ -77,7 +79,8 @@ export class NotionService {
 
       return true;
     } catch (err) {
-      throw new ConflictException('Token not valid');
+      this.logger.error(`An error occured ${err}`);
+      throw new BadRequestException('Token not valid');
     }
   }
 }

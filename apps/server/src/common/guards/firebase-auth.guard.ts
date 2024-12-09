@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -11,6 +12,8 @@ import { UsersService } from '../../app/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  private readonly logger = new Logger(AuthGuard.name);
+
   constructor(
     private readonly firebaseService: FirebaseService,
     private readonly usersService: UsersService,
@@ -45,6 +48,7 @@ export class AuthGuard implements CanActivate {
 
       return true;
     } catch (err) {
+      this.logger.error(`An error occured ${err}`);
       return false;
     }
   }

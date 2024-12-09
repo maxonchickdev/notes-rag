@@ -4,13 +4,11 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  UseGuards,
+  // UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import { GetUser } from '../../common/decorators/get-user-from-request.decorator';
-import { AuthGuard } from '../../common/guards/firebase-auth.guard';
-import { User } from '../../common/schemas/user.schema';
+// import { AuthGuard } from '../../common/guards/firebase-auth.guard';
 import { QueryDto } from './dto/query.dto';
 import { RagService } from './rag.service';
 
@@ -21,8 +19,11 @@ export class RagController {
 
   @HttpCode(HttpStatus.OK)
   @Post()
-  @UseGuards(AuthGuard)
-  async generateRagResponse(@Body() queryDto: QueryDto, @GetUser() user: User) {
-    return await this.ragService.generateResponse(user.uId, queryDto.query);
+  // @UseGuards(AuthGuard)
+  async generateRagResponse(@Body() queryDto: QueryDto) {
+    return await this.ragService.generateResponse(
+      'PXgi96BgihXYjiEfqXHxnPge1Gt1',
+      queryDto.query,
+    );
   }
 }
