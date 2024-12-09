@@ -11,6 +11,7 @@ import notionConfig from '../common/config/notion.config';
 import serverConfig from '../common/config/server.config';
 import { FirebaseModule } from './firebase/firebase.module';
 import { NotionModule } from './notion/notion.module';
+import { RagModule } from './rag/rag.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -38,6 +39,7 @@ import { UsersModule } from './users/users.module';
     }),
     UsersModule,
     NotionModule,
+    RagModule,
   ],
 })
 export class AppModule {}

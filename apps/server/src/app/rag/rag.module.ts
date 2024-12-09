@@ -3,17 +3,14 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { HTTP_CONFIG } from '../../common/config/http.config';
-import { FirebaseModule } from '../firebase/firebase.module';
-import { UsersModule } from '../users/users.module';
-import { NotionController } from './notion.controller';
-import { NotionService } from './notion.service';
+import { NotionModule } from '../notion/notion.module';
+import { RagController } from './rag.controller';
+import { RagService } from './rag.service';
 
 @Module({
-  controllers: [NotionController],
-  exports: [NotionService],
+  controllers: [RagController],
   imports: [
-    FirebaseModule,
-    UsersModule,
+    NotionModule,
     HttpModule.registerAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
@@ -22,6 +19,6 @@ import { NotionService } from './notion.service';
       }),
     }),
   ],
-  providers: [NotionService],
+  providers: [RagService],
 })
-export class NotionModule {}
+export class RagModule {}

@@ -24,13 +24,18 @@ export class NotionController {
 
   @Get('documents')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
   async getDocs(@GetUser() user: User): Promise<DocumentDto[]> {
     return await this.notionService.getDocuments(user.uId);
   }
 
   @Get(':pageId')
   @HttpCode(HttpStatus.OK)
-  async convert(@Param('pageId') pageId: string, @GetUser() user: User) {
+  @UseGuards(AuthGuard)
+  async convert(
+    @Param('pageId') pageId: string,
+    @GetUser() user: User,
+  ): Promise<boolean> {
     return await this.notionService.convertNotionToMarkdown(user.uId, pageId);
   }
 
@@ -41,6 +46,6 @@ export class NotionController {
     @Body() apiTokenDto: ApiTokenDto,
     @GetUser() user: User,
   ): Promise<boolean> {
-    return this.notionService.tokenHealthCheck(user.uId, apiTokenDto);
+    return await this.notionService.tokenHealthCheck(user.uId, apiTokenDto);
   }
 }

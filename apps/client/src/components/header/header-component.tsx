@@ -1,26 +1,37 @@
 import TuneIcon from '@mui/icons-material/Tune';
 import { Box, Button, Typography } from '@mui/material';
 import { IconButton } from '@mui/material';
-import { FC } from 'react';
+import { FC, useCallback, useState } from 'react';
 
 import { COLORS } from '../../enums/colors.enum';
 import { DrawerComponent } from '../drawer/drawer.component';
+import { ModalComponent } from '../modal/modal.component';
 
 interface Props {
   documents: string[];
-  handleCloseDrawer: () => void;
-  handleOpenDrawer: () => void;
   onLogout: () => void;
-  openDrawer: boolean;
 }
 
-export const HeaderComponent: FC<Props> = ({
-  documents,
-  handleCloseDrawer,
-  handleOpenDrawer,
-  onLogout,
-  openDrawer,
-}) => {
+export const HeaderComponent: FC<Props> = ({ documents, onLogout }) => {
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+
+  const handleCloseModal = useCallback(() => {
+    setOpenModal(false);
+  }, [openModal]);
+
+  const handleOpenModal = useCallback(() => {
+    setOpenModal(true);
+  }, [openModal]);
+
+  const handleOpenDrawer = useCallback(() => {
+    setOpenDrawer(true);
+  }, [openDrawer]);
+
+  const handleCloseDrawer = useCallback(() => {
+    setOpenDrawer(false);
+  }, [openDrawer]);
+
   return (
     <Box
       sx={{
@@ -37,13 +48,23 @@ export const HeaderComponent: FC<Props> = ({
         sx={{ borderRadius: '3px', display: 'flex', gap: '5px' }}
       >
         <Typography sx={{ color: COLORS.BLACK, fontSize: '16px' }}>
-          Connect notion api
+          Explore documents
         </Typography>
         <TuneIcon color="primary" fontSize="medium" />
       </IconButton>
-      <Button color="primary" onClick={onLogout}>
-        Logout
-      </Button>
+      <Box sx={{ alignItems: 'center', display: 'flex', gap: '10px' }}>
+        <Button onClick={handleOpenModal} variant="outlined">
+          Notion api token
+        </Button>
+        <ModalComponent
+          handleCloseModal={handleCloseModal}
+          handleOpenModal={handleOpenDrawer}
+          openModal={openModal}
+        />
+        <Button onClick={onLogout} variant="outlined">
+          Logout
+        </Button>
+      </Box>
       <DrawerComponent
         documents={documents}
         handleCloseDrawer={handleCloseDrawer}

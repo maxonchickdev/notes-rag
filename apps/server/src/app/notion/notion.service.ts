@@ -77,7 +77,6 @@ export class NotionService {
 
       return true;
     } catch (err) {
-      console.log(err);
       throw new ConflictException('Token not valid');
     }
   }

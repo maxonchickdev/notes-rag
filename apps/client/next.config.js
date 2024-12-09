@@ -21,6 +21,8 @@ const nextConfig = {
     ROUTE_SIGN_IN: process.env.ROUTE_SIGN_IN,
     ROUTE_NOTION_API_TOKEN_HEALTH_CHECK:
       process.env.ROUTE_NOTION_API_TOKEN_HEALTH_CHECK,
+
+    ROUTE_GET_DOCUMENTS: process.env.ROUTE_GET_DOCUMENTS,
   },
   nx: {
     svgr: false,

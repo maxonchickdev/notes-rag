@@ -5,11 +5,6 @@ interface Props {
   document: string;
 }
 
-/**
- *
- * @param root0
- * @param root0.document
- */
 export const DocumentComponent: FC<Props> = ({ document }) => {
   return (
     <Box
