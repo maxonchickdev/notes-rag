@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { HTTP_CONFIG } from '../../common/config/http.config';
+import { AuthGuard } from '../../common/guards/firebase-auth.guard';
 import { FirebaseModule } from '../firebase/firebase.module';
 import { NotionModule } from '../notion/notion.module';
 import { UsersModule } from '../users/users.module';
@@ -23,6 +24,6 @@ import { RagService } from './rag.service';
       }),
     }),
   ],
-  providers: [RagService],
+  providers: [RagService, AuthGuard],
 })
 export class RagModule {}

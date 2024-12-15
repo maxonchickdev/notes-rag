@@ -1,15 +1,17 @@
 import {
-  Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
-  Post,
-  // UseGuards,
+  Param,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-// import { AuthGuard } from '../../common/guards/firebase-auth.guard';
-import { QueryDto } from './dto/query.dto';
+import { GetUser } from '../../common/decorators/get-user-from-request.decorator';
+import { AuthGuard } from '../../common/guards/firebase-auth.guard';
+import { User } from '../../common/schemas/user.schema';
+import { RagHistoryDto } from './dto/rag-history.dto';
 import { RagService } from './rag.service';
 
 @ApiTags('rag')
@@ -17,13 +19,20 @@ import { RagService } from './rag.service';
 export class RagController {
   constructor(private readonly ragService: RagService) {}
 
+  @Get('history')
   @HttpCode(HttpStatus.OK)
-  @Post()
-  // @UseGuards(AuthGuard)
-  async generateRagResponse(@Body() queryDto: QueryDto) {
-    return await this.ragService.generateResponse(
-      'PXgi96BgihXYjiEfqXHxnPge1Gt1',
-      queryDto.query,
-    );
+  @UseGuards(AuthGuard)
+  async getRagHistory(@GetUser() user: User): Promise<RagHistoryDto[]> {
+    return await this.ragService.getHistory(user.uId);
+  }
+
+  @Get(':query')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  async generateRagResponse(
+    @GetUser() user: User,
+    @Param('query') query: string,
+  ): Promise<boolean> {
+    return await this.ragService.generateResponse(user.uId, query);
   }
 }

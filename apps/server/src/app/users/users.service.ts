@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 
 import { User } from '../../common/schemas/user.schema';
 import { DocumentDto } from '../notion/dto/document.dto';
+import { RagHistoryDto } from '../rag/dto/rag-history.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
@@ -67,5 +68,21 @@ export class UsersService {
     }
 
     return true;
+  }
+
+  async addToRagHistory(
+    uId: string,
+    ragHistoryDto: RagHistoryDto,
+  ): Promise<boolean> {
+    const result = await this.userModel.updateOne(
+      {
+        uId,
+      },
+      {
+        $push: { ragHistory: ragHistoryDto },
+      },
+    );
+
+    return result.modifiedCount > 0;
   }
 }

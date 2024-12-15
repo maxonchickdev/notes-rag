@@ -27,6 +27,7 @@ export const ModalComponent: FC<Props> = ({
     control,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm<INotionApiToken>({
     mode: 'onChange',
   });
@@ -40,16 +41,23 @@ export const ModalComponent: FC<Props> = ({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        method: 'post',
-        url: process.env.ROUTE_NOTION_API_TOKEN_HEALTH_CHECK,
+        method: 'GET',
+        url: `${process.env.ROUTE_NOTION_API_TOKEN_HEALTH_CHECK}/${data.token}`,
       });
       localStorage.setItem('notion-api-token', data.token);
       enqueueSnackbar('Token saved', { variant: 'success' });
+      reset({
+        token: '',
+      });
     } catch (err) {
-      if (err instanceof AxiosError)
+      reset({
+        token: '',
+      });
+      if (err instanceof AxiosError) {
         enqueueSnackbar(`${err.response?.data.message}`, {
           variant: 'error',
         });
+      }
     }
   };
 

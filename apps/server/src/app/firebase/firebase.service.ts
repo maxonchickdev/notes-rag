@@ -31,6 +31,7 @@ export class FirebaseService implements OnModuleInit {
       }),
     });
   }
+
   async verifyIdToken(token: string) {
     try {
       return await auth().verifyIdToken(token);

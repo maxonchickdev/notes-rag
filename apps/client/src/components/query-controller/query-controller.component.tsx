@@ -22,12 +22,12 @@ export const QueryController: FC<Props> = ({
     <Controller
       control={control}
       name={name}
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { onChange, value = '' } }) => (
         <TextField
-          defaultValue={value}
           fullWidth
           label={label}
           onChange={onChange}
+          placeholder="Enter query"
           size="small"
           sx={{ margin: '4px 0', width: '700px' }}
           type={type}

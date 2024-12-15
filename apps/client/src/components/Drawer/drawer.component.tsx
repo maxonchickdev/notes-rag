@@ -2,11 +2,10 @@
 
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Button, Drawer, IconButton, Typography } from '@mui/material';
-import { IAddDocument, IDocument } from '@notes-rag/shared';
+import { IDocument } from '@notes-rag/shared';
 import { AxiosError } from 'axios';
 import { enqueueSnackbar } from 'notistack';
 import { FC, useState } from 'react';
-import { useForm } from 'react-hook-form';
 
 import { axiosInstance } from '../../configs/axios.config';
 import { useGetFirebaseToken } from '../../hooks/use-get-firebase-token.hook';
@@ -25,13 +24,6 @@ export const DrawerComponent: FC<Props> = ({
 }) => {
   const [documents, setDocuments] = useState<IDocument[]>([]);
   const { token } = useGetFirebaseToken();
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-  } = useForm<IAddDocument>({
-    mode: 'onChange',
-  });
 
   const getDocuments = async () => {
     try {
@@ -39,7 +31,7 @@ export const DrawerComponent: FC<Props> = ({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        method: 'get',
+        method: 'GET',
         url: process.env.ROUTE_GET_DOCUMENTS,
       });
       setDocuments(response.data);
@@ -69,9 +61,13 @@ export const DrawerComponent: FC<Props> = ({
         <Button fullWidth onClick={getDocuments} variant="outlined">
           Get documents
         </Button>
-        {documents.map((document, index) => (
-          <DocumentComponent document={document.document} key={index} />
-        ))}
+        {documents.length > 0 ? (
+          documents.map((document, index) => (
+            <DocumentComponent document={document.document} key={index} />
+          ))
+        ) : (
+          <>No documents</>
+        )}
       </Box>
     </Drawer>
   );

@@ -22,15 +22,12 @@ export const NotionApiTokenController: FC<Props> = ({
     <Controller
       control={control}
       name={name}
-      render={({ field: { onChange, value } }) => (
+      render={({ field: { onChange, value = '' } }) => (
         <TextField
-          defaultValue={value}
           fullWidth
           label={label}
-          multiline
           onChange={onChange}
           placeholder="Paste notion integration token"
-          rows={1}
           size="small"
           sx={{ margin: '4px 0' }}
           type={type}

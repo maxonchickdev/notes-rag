@@ -6,7 +6,6 @@ import { NotionToMarkdown } from 'notion-to-md';
 
 import { NOTION_CONFIG } from '../../common/config/notion.config';
 import { UsersService } from '../users/users.service';
-import { ApiTokenDto } from './dto/api-token.dto';
 import { DocumentDto } from './dto/document.dto';
 
 @Injectable()
@@ -60,22 +59,19 @@ export class NotionService {
     return user ? user.documents : [];
   }
 
-  async tokenHealthCheck(
-    uId: string,
-    apiTokenDto: ApiTokenDto,
-  ): Promise<boolean> {
+  async tokenHealthCheck(uId: string, apiToken: string): Promise<boolean> {
     try {
       await this.httpService.axiosRef({
         baseURL: this.configService.get<string>(`${NOTION_CONFIG}.healthCheck`),
         headers: {
-          Authorization: `Bearer ${apiTokenDto.token}`,
+          Authorization: `Bearer ${apiToken}`,
           'Content-Type': 'application/json',
           'Notion-Version': '2022-06-28',
         },
-        method: 'get',
+        method: 'GET',
       });
 
-      await this.usersService.setNotionApiToken(uId, apiTokenDto.token);
+      await this.usersService.setNotionApiToken(uId, apiToken);
 
       return true;
     } catch (err) {

@@ -22,7 +22,12 @@ const nextConfig = {
     ROUTE_NOTION_API_TOKEN_HEALTH_CHECK:
       process.env.ROUTE_NOTION_API_TOKEN_HEALTH_CHECK,
 
+    ROUTE_GET_RAG_HISTORY: process.env.ROUTE_GET_RAG_HISTORY,
     ROUTE_GET_DOCUMENTS: process.env.ROUTE_GET_DOCUMENTS,
+
+    ROUTE_POST_QUERY: process.env.ROUTE_POST_QUERY,
+
+    ROUTE_SIGN_OUT: process.env.ROUTE_SIGN_OUT,
   },
   nx: {
     svgr: false,

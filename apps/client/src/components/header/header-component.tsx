@@ -1,19 +1,40 @@
 import TuneIcon from '@mui/icons-material/Tune';
 import { Box, Button, Typography } from '@mui/material';
 import { IconButton } from '@mui/material';
-import { FC, useCallback, useState } from 'react';
+import { AxiosError } from 'axios';
+import { getAuth } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { enqueueSnackbar } from 'notistack';
+import { useCallback, useState } from 'react';
 
+import { axiosInstance } from '../../configs/axios.config';
+import { app } from '../../configs/firebase.config';
 import { COLORS } from '../../enums/colors.enum';
 import { DrawerComponent } from '../drawer/drawer.component';
 import { ModalComponent } from '../modal/modal.component';
 
-interface Props {
-  onLogout: () => void;
-}
-
-export const HeaderComponent: FC<Props> = ({ onLogout }) => {
+export const HeaderComponent = () => {
+  const router = useRouter();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+
+  const onLogout = async () => {
+    try {
+      await getAuth(app).signOut();
+
+      await axiosInstance({
+        method: 'GET',
+        url: process.env.ROUTE_SIGN_OUT,
+      });
+
+      router.push('/');
+    } catch (err) {
+      if (err instanceof AxiosError)
+        enqueueSnackbar(`${err.response?.data.message}`, {
+          variant: 'error',
+        });
+    }
+  };
 
   const handleCloseModal = useCallback(() => {
     setOpenModal(false);
@@ -36,10 +57,16 @@ export const HeaderComponent: FC<Props> = ({ onLogout }) => {
       sx={{
         alignItems: 'center',
         display: 'flex',
+        height: '60px',
         justifyContent: 'space-between',
+        left: '50%',
         margin: '0 auto',
         maxWidth: '1220px',
+        position: 'fixed',
         px: '10px',
+        top: 0,
+        transform: 'translateX(-50%)',
+        width: '100%',
       }}
     >
       <IconButton

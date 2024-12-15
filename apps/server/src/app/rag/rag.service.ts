@@ -4,8 +4,10 @@ import { ConfigService } from '@nestjs/config';
 
 import { HUGGING_FACE_CONFIG } from '../../common/config/hugging-face.config';
 import { NotionService } from '../notion/notion.service';
+import { UsersService } from '../users/users.service';
 import { ChatRequestDataDto } from './dto/chat-request-data.dto';
 import { ChatResponseDataDto } from './dto/chat-response-data.dto';
+import { RagHistoryDto } from './dto/rag-history.dto';
 
 @Injectable()
 export class RagService {
@@ -15,6 +17,7 @@ export class RagService {
     private readonly notionService: NotionService,
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    private readonly userService: UsersService,
   ) {}
 
   private createInputText(context: string, query: string): string {
@@ -84,11 +87,11 @@ export class RagService {
     }
   }
 
-  private extractAnswer(answer: ChatResponseDataDto, query: string): string {
-    return answer[0]['generated_text'].split(query).join('').trim();
+  private extractAnswer(answer: ChatResponseDataDto) {
+    return answer[0]['generated_text'].trim().split('\n').pop();
   }
 
-  async generateResponse(uId: string, query: string): Promise<string> {
+  async generateResponse(uId: string, query: string): Promise<boolean> {
     try {
       const documents = await this.fetchAndPerformDocuments(uId);
 
@@ -102,12 +105,27 @@ export class RagService {
 
       const inputText = this.createInputText(context, query);
 
-      const answer = await this.fetchAnswer(inputText);
+      const templateAnswer = await this.fetchAnswer(inputText);
 
-      return this.extractAnswer(answer, query);
+      console.log(templateAnswer);
+
+      const answer = this.extractAnswer(templateAnswer);
+
+      await this.userService.addToRagHistory(uId, {
+        query: query,
+        response: answer,
+      });
+
+      return true;
     } catch (err) {
       this.logger.error(`An error occured ${err}`);
       throw new BadRequestException('Cannot generate response');
     }
+  }
+
+  async getHistory(uId: string): Promise<RagHistoryDto[]> {
+    const user = await this.userService.getUserByUId(uId);
+
+    return user ? user.ragHistory : [];
   }
 }
