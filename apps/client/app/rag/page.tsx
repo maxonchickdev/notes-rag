@@ -78,7 +78,7 @@ export default function Page() {
 
   return (
     <>
-      <HeaderComponent onLogout={() => console.log('logout')} />
+      <HeaderComponent />
       <Box
         sx={{
           margin: '0 auto',
